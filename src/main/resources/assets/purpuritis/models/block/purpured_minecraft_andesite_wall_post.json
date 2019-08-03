@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_template_wall_post",
+    "textures": {
+        "wall": "purpuritis:block/purpured_minecraft_andesite"
+    }
+}

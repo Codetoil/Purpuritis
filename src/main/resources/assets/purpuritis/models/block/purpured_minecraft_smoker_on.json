@@ -1,0 +1,19 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_cube",
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [ 0, 135, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.40, 0.40, 0.40 ]
+        }
+    },
+    "textures": {
+        "particle": "purpuritis:block/purpured_minecraft_smoker_front_on",
+        "down": "purpuritis:block/purpured_minecraft_smoker_bottom",
+        "up": "purpuritis:block/purpured_minecraft_smoker_top",
+        "north": "purpuritis:block/purpured_minecraft_smoker_front_on",
+        "east": "purpuritis:block/purpured_minecraft_smoker_side",
+        "south": "purpuritis:block/purpured_minecraft_smoker_side",
+        "west": "purpuritis:block/purpured_minecraft_smoker_side"
+    }
+}

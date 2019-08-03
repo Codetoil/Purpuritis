@@ -1,0 +1,8 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_stairs",
+    "textures": {
+        "bottom": "purpuritis:block/purpured_minecraft_diorite",
+        "top": "purpuritis:block/purpured_minecraft_diorite",
+        "side": "purpuritis:block/purpured_minecraft_diorite"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_cube_column",
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [ 0, 135, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.40, 0.40, 0.40 ]
+        }
+    },
+    "textures": {
+        "end": "purpuritis:block/purpured_minecraft_pumpkin_top",
+        "side": "purpuritis:block/purpured_minecraft_pumpkin_side"
+    }
+}

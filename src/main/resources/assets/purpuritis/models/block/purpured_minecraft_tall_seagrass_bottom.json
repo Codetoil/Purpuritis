@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_seagrass",
+    "textures": {
+        "seagrass": "purpuritis:block/purpured_minecraft_tall_seagrass_bottom",
+        "particle": "purpuritis:block/purpured_minecraft_tall_seagrass_bottom"
+    }
+}

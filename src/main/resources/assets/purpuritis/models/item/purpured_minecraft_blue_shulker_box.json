@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:item/purpured_minecraft_template_shulker_box",
+    "textures": {
+        "particle": "purpuritis:block/purpured_minecraft_blue_shulker_box"
+    }
+}

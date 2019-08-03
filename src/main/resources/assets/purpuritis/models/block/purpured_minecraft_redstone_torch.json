@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_template_torch",
+    "textures": {
+        "torch": "purpuritis:block/purpured_minecraft_redstone_torch"
+    }
+}

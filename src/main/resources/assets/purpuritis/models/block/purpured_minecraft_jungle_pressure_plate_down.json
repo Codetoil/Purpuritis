@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_pressure_plate_down",
+    "textures": {
+        "texture": "block/purpured_minecraft_jungle_planks"
+    }
+}

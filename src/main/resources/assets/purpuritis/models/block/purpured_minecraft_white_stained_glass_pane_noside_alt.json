@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_template_glass_pane_noside_alt",
+    "textures": {
+        "pane": "purpuritis:block/purpured_minecraft_white_stained_glass"
+    }
+}

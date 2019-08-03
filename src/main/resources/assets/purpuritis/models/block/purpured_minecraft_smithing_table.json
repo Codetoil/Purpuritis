@@ -1,0 +1,12 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_cube",
+    "textures": {
+        "particle": "purpuritis:block/purpured_minecraft_smithing_table_front",
+        "down": "purpuritis:block/purpured_minecraft_smithing_table_bottom",
+        "up": "purpuritis:block/purpured_minecraft_smithing_table_top",
+        "north": "purpuritis:block/purpured_minecraft_smithing_table_front",
+        "east": "purpuritis:block/purpured_minecraft_smithing_table_side",
+        "south": "purpuritis:block/purpured_minecraft_smithing_table_front",
+        "west": "purpuritis:block/purpured_minecraft_smithing_table_side"
+    }
+}

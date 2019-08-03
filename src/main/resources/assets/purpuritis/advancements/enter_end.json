@@ -1,0 +1,31 @@
+{
+  "parent": "purpuritis:story/enter_nether",
+  "display": {
+    "icon": {
+      "item": "minecraft:end_stone"
+    },
+    "title": {
+      "translate": "advancements.purpuritis.story.enter_end.title"
+    },
+    "description": {
+      "translate": "advancements.purpuritis.story.enter_end.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "enter": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "minecraft:the_end"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "enter"
+    ]
+  ]
+}

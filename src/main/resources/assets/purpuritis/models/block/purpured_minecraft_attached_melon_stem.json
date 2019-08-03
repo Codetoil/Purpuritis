@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_stem_fruit",
+    "textures": {
+        "stem": "purpuritis:block/purpured_minecraft_melon_stem",
+        "upperstem": "purpuritis:block/purpured_minecraft_attached_melon_stem"
+    }
+}

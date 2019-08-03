@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_button",
+    "textures": {
+        "texture": "block/purpured_minecraft_acacia_planks"
+    }
+}

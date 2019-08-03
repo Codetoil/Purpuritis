@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_cross",
+    "textures": {
+        "cross": "purpuritis:block/purpured_minecraft_white_tulip"
+    }
+}

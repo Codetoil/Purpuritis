@@ -1,0 +1,8 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_inner_stairs",
+    "textures": {
+        "bottom": "purpuritis:block/purpured_minecraft_quartz_block_bottom",
+        "top": "purpuritis:block/purpured_minecraft_quartz_block_top",
+        "side": "purpuritis:block/purpured_minecraft_quartz_block_side"
+    }
+}

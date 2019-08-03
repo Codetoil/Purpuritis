@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_template_orientable_trapdoor_top",
+    "textures": {
+        "texture": "block/purpured_minecraft_jungle_trapdoor"
+    }
+}

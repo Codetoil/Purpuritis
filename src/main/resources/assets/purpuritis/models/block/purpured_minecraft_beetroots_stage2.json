@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_crop",
+    "textures": {
+        "crop": "purpuritis:block/purpured_minecraft_beetroots_stage2"
+    }
+}

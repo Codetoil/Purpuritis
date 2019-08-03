@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_stem_growth1",
+    "textures": {
+        "stem": "purpuritis:block/purpured_minecraft_melon_stem"
+    }
+}

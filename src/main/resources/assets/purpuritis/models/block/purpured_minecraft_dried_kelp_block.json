@@ -1,0 +1,25 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_block",
+    "textures": {
+        "particle": "purpuritis:block/purpured_minecraft_dried_kelp_side",
+        "down": "purpuritis:block/purpured_minecraft_dried_kelp_bottom",
+        "up": "purpuritis:block/purpured_minecraft_dried_kelp_top",
+        "north": "purpuritis:block/purpured_minecraft_dried_kelp_side",
+        "east": "purpuritis:block/purpured_minecraft_dried_kelp_side",
+        "south": "purpuritis:block/purpured_minecraft_dried_kelp_side",
+        "west": "purpuritis:block/purpured_minecraft_dried_kelp_side"
+    },
+    "elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "down":  { "texture": "#down", "cullface": "down" },
+                "up":    { "texture": "#up", "cullface": "up" },
+                "north": { "texture": "#north", "cullface": "north" },
+                "south": { "uv": [16, 0, 0, 16], "texture": "#south", "cullface": "south" },
+                "west":  { "texture": "#west", "cullface": "west" },
+                "east":  { "uv": [16, 0, 0, 16], "texture": "#east", "cullface": "east" }
+            }
+        }
+    ]
+}

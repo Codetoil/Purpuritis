@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:item/purpured_minecraft_handheld",
+    "textures": {
+        "layer0": "purpuritis:item/purpured_supertools_wooden_sickle"
+    }
+}

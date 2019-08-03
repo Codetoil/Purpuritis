@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_tinted_cross",
+    "textures": {
+        "particle": "purpuritis:block/purpured_minecraft_kelp",
+        "cross": "purpuritis:block/purpured_minecraft_kelp"
+    }
+}

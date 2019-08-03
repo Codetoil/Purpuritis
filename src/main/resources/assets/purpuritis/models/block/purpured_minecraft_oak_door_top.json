@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_door_top",
+    "textures": {
+        "bottom": "purpuritis:block/purpured_minecraft_oak_door_bottom",
+        "top": "purpuritis:block/purpured_minecraft_oak_door_top"
+    }
+}

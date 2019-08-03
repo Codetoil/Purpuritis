@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_rail_flat",
+    "textures": {
+        "rail": "purpuritis:block/purpured_minecraft_detector_rail"
+    }
+}

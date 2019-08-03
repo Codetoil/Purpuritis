@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_observer",
+    "textures": {
+        "bottom": "purpuritis:block/purpured_minecraft_observer_back_on"
+    }
+}

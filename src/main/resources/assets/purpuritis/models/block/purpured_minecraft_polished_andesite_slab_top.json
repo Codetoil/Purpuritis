@@ -1,0 +1,8 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_slab_top",
+    "textures": {
+        "bottom": "purpuritis:block/purpured_minecraft_polished_andesite",
+        "top": "purpuritis:block/purpured_minecraft_polished_andesite",
+        "side": "purpuritis:block/purpured_minecraft_polished_andesite"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_orientable",
+    "textures": {
+        "top": "purpuritis:blocks/purpured_supertools_concrete_furnace_top",
+        "front": "purpuritis:blocks/purpured_supertools_concrete_furnace_front_on",
+        "side": "purpuritis:blocks/purpured_supertools_concrete_furnace_side"
+    }
+}

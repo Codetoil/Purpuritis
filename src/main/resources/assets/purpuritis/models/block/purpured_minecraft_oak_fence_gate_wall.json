@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_template_fence_gate_wall",
+    "textures": {
+        "texture": "block/purpured_minecraft_oak_planks"
+    }
+}

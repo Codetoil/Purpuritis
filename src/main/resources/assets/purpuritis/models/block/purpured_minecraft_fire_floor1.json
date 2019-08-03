@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_fire_floor",
+    "textures": {
+        "particle": "purpuritis:block/purpured_minecraft_fire_1",
+        "fire": "purpuritis:block/purpured_minecraft_fire_1"
+    }
+}

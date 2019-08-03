@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_cube_column",
+    "textures": {
+        "end": "purpuritis:block/purpured_minecraft_stripped_spruce_log_top",
+        "side": "purpuritis:block/purpured_minecraft_stripped_spruce_log"
+    }
+}

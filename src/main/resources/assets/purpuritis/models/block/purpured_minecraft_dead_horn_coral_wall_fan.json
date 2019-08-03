@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_coral_wall_fan",
+    "textures": {
+        "fan": "purpuritis:block/purpured_minecraft_dead_horn_coral_fan"
+    }
+}

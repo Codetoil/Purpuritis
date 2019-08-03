@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_two_turtle_eggs",
+    "textures": {
+        "particle":"block/purpured_minecraft_turtle_egg_very_cracked",
+        "all": "purpuritis:block/purpured_minecraft_turtle_egg_very_cracked"
+    }
+}

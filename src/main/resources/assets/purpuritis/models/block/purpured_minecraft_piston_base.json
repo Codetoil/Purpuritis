@@ -1,0 +1,8 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_piston_extended",
+    "textures": {
+        "bottom": "purpuritis:block/purpured_minecraft_piston_bottom",
+        "side": "purpuritis:block/purpured_minecraft_piston_side",
+        "inside": "purpuritis:block/purpured_minecraft_piston_inner"
+    }
+}

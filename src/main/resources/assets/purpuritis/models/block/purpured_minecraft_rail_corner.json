@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_rail_curved",
+    "textures": {
+        "rail": "purpuritis:block/purpured_minecraft_rail_corner"
+    }
+}

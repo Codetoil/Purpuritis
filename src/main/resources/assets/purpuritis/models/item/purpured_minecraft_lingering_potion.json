@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:item/purpured_minecraft_generated",
+    "textures": {
+        "layer0": "purpuritis:item/purpured_minecraft_potion_overlay",
+        "layer1": "purpuritis:item/purpured_minecraft_lingering_potion"
+    }
+}

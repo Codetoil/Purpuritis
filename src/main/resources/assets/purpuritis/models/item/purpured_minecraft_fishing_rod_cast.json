@@ -1,0 +1,6 @@
+{
+    "parent": "purpuritis:item/purpured_minecraft_fishing_rod",
+    "textures": {
+        "layer0": "purpuritis:item/purpured_minecraft_fishing_rod_cast"
+    }
+}

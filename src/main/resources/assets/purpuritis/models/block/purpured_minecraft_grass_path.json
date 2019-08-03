@@ -1,0 +1,21 @@
+{   "parent": "purpuritis:block/purpured_minecraft_block",
+    "textures": {
+        "particle": "purpuritis:block/purpured_minecraft_dirt",
+        "top": "purpuritis:block/purpured_minecraft_grass_path_top",
+        "side": "purpuritis:block/purpured_minecraft_grass_path_side",
+        "bottom": "purpuritis:block/purpured_minecraft_dirt"
+    },
+    "elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 16, 15, 16 ],
+            "faces": {
+                "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#bottom", "cullface": "down" },
+                "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#top" },
+                "north": { "uv": [ 0, 1, 16, 16 ], "texture": "#side", "cullface": "north" },
+                "south": { "uv": [ 0, 1, 16, 16 ], "texture": "#side", "cullface": "south" },
+                "west":  { "uv": [ 0, 1, 16, 16 ], "texture": "#side", "cullface": "west" },
+                "east":  { "uv": [ 0, 1, 16, 16 ], "texture": "#side", "cullface": "east" }
+            }
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "parent": "purpuritis:item/purpured_minecraft_generated",
+    "textures": {
+        "layer0": "purpuritis:item/purpured_minecraft_elytra"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "broken": 1
+            },
+            "model": "purpuritis:item/purpured_minecraft_broken_elytra"
+        }
+    ]
+}

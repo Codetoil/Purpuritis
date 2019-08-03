@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:item/purpured_minecraft_generated",
+    "textures": {
+        "layer0": "purpuritis:item/purpured_minecraft_firework_star",
+        "layer1": "purpuritis:item/purpured_minecraft_firework_star_overlay"
+    }
+}

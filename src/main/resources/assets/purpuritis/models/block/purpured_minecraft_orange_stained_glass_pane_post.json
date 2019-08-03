@@ -1,0 +1,7 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_template_glass_pane_post",
+    "textures": {
+        "edge": "purpuritis:block/purpured_minecraft_orange_stained_glass_pane_top",
+        "pane": "purpuritis:block/purpured_minecraft_orange_stained_glass"
+    }
+}

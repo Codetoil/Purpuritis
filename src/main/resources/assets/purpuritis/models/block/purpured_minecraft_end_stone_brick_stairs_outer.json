@@ -1,0 +1,8 @@
+{
+    "parent": "purpuritis:block/purpured_minecraft_outer_stairs",
+    "textures": {
+        "bottom": "purpuritis:block/purpured_minecraft_end_stone_bricks",
+        "top": "purpuritis:block/purpured_minecraft_end_stone_bricks",
+        "side": "purpuritis:block/purpured_minecraft_end_stone_bricks"
+    }
+}

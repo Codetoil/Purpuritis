@@ -1,0 +1,31 @@
+{
+  "parent": "purpuritis:story/enter_overworld",
+  "display": {
+    "icon": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "title": {
+      "translate": "advancements.story.enter_nether.title"
+    },
+    "description": {
+      "translate": "advancements.story.enter_nether.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "enter": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "minecraft:the_nether"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "enter"
+    ]
+  ]
+}
