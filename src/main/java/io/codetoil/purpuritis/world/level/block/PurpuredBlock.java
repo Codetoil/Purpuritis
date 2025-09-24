@@ -4,25 +4,18 @@ package io.codetoil.purpuritis.world.level.block;
 import io.codetoil.purpuritis.Purpuritis;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class PurpuredBlock extends Block implements IPurpuredBlock
 {
-	private final Block blockToPurpur;
+	private final Block normalBlock;
 
-	public PurpuredBlock(Block blockToPurpur)
-	{
-		super(Block.Properties.of().mapColor(MapColor.COLOR_PINK));
-		this.blockToPurpur = blockToPurpur;
-	}
-
-	public PurpuredBlock(Block blockToPurpur, Block.Properties properties)
+	public PurpuredBlock(Block normalBlock, Block.Properties properties)
 	{
 		super(properties);
-		this.blockToPurpur = blockToPurpur;
+		this.normalBlock = normalBlock;
 	}
 
     @Override
@@ -32,12 +25,12 @@ public class PurpuredBlock extends Block implements IPurpuredBlock
 
     public @NotNull Block getNormalBlock()
 	{
-		return this.blockToPurpur;
+		return this.normalBlock;
 	}
 
 	@Override
 	public @NotNull Item asItem()
 	{
-		return Objects.requireNonNull(Purpuritis.purpuredItems.get(this.blockToPurpur.asItem())).getSelf();
+		return Objects.requireNonNull(Purpuritis.purpuredItems.get(this.normalBlock.asItem())).getSelf();
 	}
 }

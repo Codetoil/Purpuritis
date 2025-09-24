@@ -13,12 +13,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterials;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.TickEvent;
@@ -159,21 +161,18 @@ public class Purpuritis {
             LOGGER.info("Registering Blocks");
             ForgeRegistries.BLOCKS.forEach((block) -> {
                 if (!(block instanceof IPurpuredBlock)) {
-                    PurpuredBlock block1 = new PurpuredBlock(block);
-                    purpuredBlocks.put(block, block1);
+                    PurpuredBlock purpuredBlock = new PurpuredBlock(block, BlockBehaviour.Properties.of()
+                            .mapColor(DyeColor.PINK));
+                    purpuredBlocks.put(block, purpuredBlock);
+                    helper.register(
+                            ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
+                                    "purpured_" + Objects.requireNonNull(ForgeRegistries.BLOCKS
+                                            .getKey(purpuredBlock.getNormalBlock())).getNamespace()
+                                            + "_" + Objects.requireNonNull(ForgeRegistries.BLOCKS
+                                            .getKey(purpuredBlock.getNormalBlock())).getPath()
+                            ),
+                            purpuredBlock.getSelf());
                 }
-            });
-            purpuredBlocks.forEach((block, purpuredBlock) ->
-            {
-                assert purpuredBlock != null;
-                helper.register(
-                        ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
-                                Objects.requireNonNull(ForgeRegistries.BLOCKS
-                                        .getKey(purpuredBlock.getNormalBlock())).getNamespace()
-                                        + "_" + Objects.requireNonNull(ForgeRegistries.BLOCKS
-                                        .getKey(purpuredBlock.getNormalBlock())).getPath()
-                        ),
-                        purpuredBlock.getSelf());
             });
         });
         registerEvent.register(ForgeRegistries.Keys.ITEMS, helper -> {
@@ -213,9 +212,10 @@ public class Purpuritis {
                     } else {
                         purpuredItem = new PurpuredItem(item, new Item.Properties());
                     }
+                    purpuredItems.put(item, purpuredItem);
                     helper.register(
                             ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
-                                    Objects.requireNonNull(ForgeRegistries.ITEMS
+                                    "purpured" + Objects.requireNonNull(ForgeRegistries.ITEMS
                                             .getKey(purpuredItem.getNormalItem())).getNamespace()
                                             + "_" + Objects.requireNonNull(ForgeRegistries.ITEMS
                                             .getKey(purpuredItem.getNormalItem())).getPath()
