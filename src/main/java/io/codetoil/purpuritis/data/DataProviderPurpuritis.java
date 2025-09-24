@@ -28,18 +28,8 @@ public class DataProviderPurpuritis implements DataProvider
                 Purpuritis.purpuredItems +
                 "\npurpuredBlocks=" +
                 Purpuritis.purpuredBlocks +
-                "\npurpuritis_overworld_loc=" +
-                Purpuritis.purpuritis_overworld_loc +
-                "\npurpuritis_overworld_biome_provider_loc=" +
-                Purpuritis.purpuritis_overworld_biome_provider_loc +
-                "\npurpuritis_overworld_chunk_generator_loc=" +
-                Purpuritis.purpuritis_overworld_chunk_generator_loc +
-                "\nbiomeConversionMap=" +
-                Purpuritis.biomeConversionMap +
-                "\nblockConversionMap=" +
-                Purpuritis.blockConversionMap +
-                "\ndimensionConversionMap=" +
-                Purpuritis.dimensionConversionMap;
+                "\npurpuredDimensionTypes=" +
+                Purpuritis.purpuredDimensionTypes;
 		Purpuritis.LOGGER.info("Finished gathering data");
         return CompletableFuture.completedFuture(data);
     }

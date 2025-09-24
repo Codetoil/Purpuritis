@@ -18,9 +18,7 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterials;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.TickEvent;
@@ -47,26 +45,14 @@ public class Purpuritis {
 
     public static final String MOD_ID = "purpuritis";
 
-    private static ResourceKey<DimensionType> purpuritis_overworld;
-    public static final BiMap<Block, Block> blockConversionMap = HashBiMap.create();
-    public static final BiMap<Biome, Biome> biomeConversionMap = HashBiMap.create();
-    public static final BiMap<ResourceKey<DimensionType>, ResourceKey<DimensionType>> dimensionConversionMap
-            = HashBiMap.create();
-    public static final ResourceLocation purpuritis_overworld_loc
-            = ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID, "purpuritis_overworld");
-    public static final ResourceLocation purpuritis_overworld_chunk_generator_loc
-            = ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID, "purpuritis_overworld_chunk_generator");
-    public static final ResourceLocation purpuritis_overworld_biome_provider_loc
-            = ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID, "purpuritis_overworld_biome_provider");
     public static final BiMap<Block, IPurpuredBlock> purpuredBlocks = HashBiMap.create();
     public static final BiMap<Item, IPurpuredItem> purpuredItems = HashBiMap.create();
-    public static final Collection<ToolMaterial> toolMaterials = Sets.newHashSet(ToolMaterial.WOOD, ToolMaterial.STONE,
-            ToolMaterial.GOLD, ToolMaterial.IRON, ToolMaterial.DIAMOND, ToolMaterial.NETHERITE);
-    public static final Collection<ArmorMaterial> armorMaterials = Sets.newHashSet(ArmorMaterials.LEATHER,
-            ArmorMaterials.ARMADILLO_SCUTE, ArmorMaterials.TURTLE_SCUTE, ArmorMaterials.CHAINMAIL,
-            ArmorMaterials.IRON, ArmorMaterials.DIAMOND, ArmorMaterials.NETHERITE);
+    public static final Collection<ToolMaterial> toolMaterials = Sets.newHashSet();
+    public static final Collection<ArmorMaterial> armorMaterials = Sets.newHashSet();
     public static final BiMap<ToolMaterial, ToolMaterial> purpuredToolMaterials = HashBiMap.create();
     public static final BiMap<ArmorMaterial, ArmorMaterial> purpuredArmorMaterials = HashBiMap.create();
+    public static final BiMap<ResourceKey<DimensionType>, ResourceKey<DimensionType>> purpuredDimensionTypes
+            = HashBiMap.create();
     // public boolean hasSetFirstToLoad = false;
     private final Queue<ChunkPos> chunkPositionQueue = Queues.newArrayDeque();
     private boolean loadedAllChunks = false;
@@ -75,24 +61,34 @@ public class Purpuritis {
         LOGGER.info("Constructing Purpuritis");
         var modBusGroup = context.getModBusGroup();
 
-        // Register the commonSetup method for modloading
         FMLCommonSetupEvent.getBus(modBusGroup).addListener(this::commonSetup);
-        // Register the enqueueIMC method for modloading
         InterModEnqueueEvent.getBus(modBusGroup).addListener(this::enqueueIMC);
-        // Register the processIMC method for modloading
         InterModProcessEvent.getBus(modBusGroup).addListener(this::processIMC);
-        // Register the doClientStuff method for modloading
         FMLClientSetupEvent.getBus(modBusGroup).addListener(this::clientSetup);
-        // Gather Data
         GatherDataEvent.getBus(modBusGroup).addListener(this::gatherData);
-        // Register Event
+        ServerStartingEvent.BUS.addListener(this::onServerStarting);
+        ServerStoppedEvent.BUS.addListener(this::onServerStopped);
+        TickEvent.ServerTickEvent.Pre.BUS.addListener(this::onServerPretick);
+        ChunkEvent.Load.BUS.addListener(this::onChunkLoad);
         RegisterEvent.getBus(modBusGroup).addListener(this::registerEvent);
+    }
+
+    public static void addToolMaterials(Collection<ToolMaterial> toolMaterials) {
+        Purpuritis.toolMaterials.addAll(toolMaterials);
+    }
+
+    public static void addArmorMaterials(Collection<ArmorMaterial> armorMaterials) {
+        Purpuritis.armorMaterials.addAll(armorMaterials);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // some preinit code
         LOGGER.info("HELLO FROM SETUP");
-        fillNormalConversionMaps();
+        addToolMaterials(Sets.newHashSet(ToolMaterial.WOOD, ToolMaterial.STONE,
+                ToolMaterial.GOLD, ToolMaterial.IRON, ToolMaterial.DIAMOND, ToolMaterial.NETHERITE));
+        addArmorMaterials(Sets.newHashSet(ArmorMaterials.LEATHER,
+                ArmorMaterials.ARMADILLO_SCUTE, ArmorMaterials.TURTLE_SCUTE, ArmorMaterials.CHAINMAIL,
+                ArmorMaterials.IRON, ArmorMaterials.DIAMOND, ArmorMaterials.NETHERITE));
         //LOGGER.info("STONE BLOCK >> {}", Blocks.STONE.getRegistryName());
     }
 
@@ -122,19 +118,9 @@ public class Purpuritis {
         event.getGenerator().addProvider(true, dataProvider);
     }
 
-    public static void fillNormalConversionMaps() {
-        blockConversionMap.putAll(Maps.transformValues(purpuredBlocks,
-                purpuredBlock -> purpuredBlock != null ? purpuredBlock.getSelf() : null));
-    }
-
-    public static void fillServerConversionMaps() {
-        dimensionConversionMap.put(BuiltinDimensionTypes.OVERWORLD, purpuritis_overworld);
-    }
-
     public void onServerStarting(ServerStartingEvent event) {
         // do something when the server starts
         LOGGER.info("HELLO from server starting");
-        fillServerConversionMaps();
     }
 
     public void onServerStopped(ServerStoppedEvent event) {
@@ -142,7 +128,7 @@ public class Purpuritis {
         LOGGER.info("Server has stopped");
     }
 
-    public void onServerTickStart(TickEvent.ServerTickEvent.Pre event) {
+    public void onServerPretick(TickEvent.ServerTickEvent.Pre event) {
         MinecraftServer server = event.getServer();
         Iterator<ServerLevel> levelIterator = server.getAllLevels().iterator();
         while (levelIterator.hasNext()) {
