@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,17 +18,19 @@ public class PurpuredObjectHelper {
         if (purpuredItemClassMap.containsKey(originalItemClass)) {
             return (Class<I>) purpuredItemClassMap.get(originalItemClass);
         }
-        return null; // TODO Replace with Generation via ASM.
+        return originalItemClass; // TODO Replace with Generation via ASM.
     }
 
     public static <I extends Item> boolean isPurpuredItem(Class<I> itemClass) {
         return purpuredItemClassMap.containsValue(itemClass);
     }
 
-    public static <I extends Item> I createPurpuredItem(I originalItem, Item.Properties properties) {
+    public static <I extends Item> I createPurpuredItem(I originalItem,
+                                                        Item.Properties properties) {
+        Class<I> originalItemClass = (Class<I>) originalItem.getClass();
         try {
-            return (I) generatePurpuredItemClass(originalItem.getClass()).getConstructor(Item.Properties.class)
-                    .newInstance(properties);
+            return generatePurpuredItemClass(originalItemClass).getConstructor(originalItemClass, Item.Properties.class)
+                    .newInstance(originalItem, properties);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -40,17 +43,19 @@ public class PurpuredObjectHelper {
         if (purpuredBlockClassMap.containsKey(originalBlockClass)) {
             return (Class<B>) purpuredBlockClassMap.get(originalBlockClass);
         }
-        return null; // TODO Replace with Generation via ASM
+        return originalBlockClass; // TODO Replace with Generation via ASM
     }
 
-    public static <B extends Block> boolean isPurpuredBlock(Class<Block> blockClass) {
+    public static <B extends Block> boolean isPurpuredBlock(Class<B> blockClass) {
         return purpuredBlockClassMap.containsValue(blockClass);
     }
 
-    public static <B extends Block> B createPurpuredBlock(Block originalBlock, Block.Properties properties) {
+    public static <B extends Block> B createPurpuredBlock(B originalBlock, BlockBehaviour.Properties properties) {
+        Class<B> originalBlockClass = (Class<B>) originalBlock.getClass();
         try {
-            return (B) generatePurpuredBlockClass(originalBlock.getClass()).getConstructor(Block.Properties.class)
-                    .newInstance(properties);
+            return generatePurpuredBlockClass(originalBlockClass)
+                    .getConstructor(originalBlockClass, BlockBehaviour.Properties.class)
+                    .newInstance(originalBlock, properties);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
