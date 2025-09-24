@@ -1,0 +1,70 @@
+# This is an example mods.toml file. It contains the data relating to the loading mods.
+# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
+# The overall format is standard TOML format, v0.5.0.
+# Note that there are a couple of TOML lists in this file.
+# Find more information on toml format here:  https://github.com/toml-lang/toml
+# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader="javafml" #mandatory
+# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+loaderVersion="[27,)" #mandatory (26 is current forge version)
+# A URL to refer people to when problems occur with this mod
+# issueTrackerURL="http://my.issue.tracker/" #optional
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]]
+# The modid of the mod
+modId="x_purpuritis_dummy" #mandatory
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+version="1.0" #mandatory
+# A display name for the mod
+displayName="XDummy Mod" #mandatory
+authors="Codetoil" #optional
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+A 4nd Dummy Mod used within the purpuritis mod code
+It's a mod to test
+Multiple Mods Running at once
+and a dummy mod used to make sure Purpuritis gets loaded
+'''
+[[mods]]
+  # The modid of the mod
+  modId="y_purpuritis_dummy" #mandatory
+  # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+  version="1.0" #mandatory
+  # A display name for the mod
+  displayName="YDummy Mod" #mandatory
+  authors="Codetoil" #optional
+  # The description text for the mod (multi line!) (#mandatory)
+  description='''
+  A 3nd Dummy Mod used within the purpuritis mod code
+  It's a mod to test
+  Multiple Mods Running at once
+  and a dummy mod used to make sure Purpuritis gets loaded
+'''[[mods]]
+ # The modid of the mod
+ modId="purpuritis_dummy" #mandatory
+ # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+ version="1.0" #mandatory
+ # A display name for the mod
+ displayName="Dummy Mod" #mandatory
+ authors="Codetoil" #optional
+ # The description text for the mod (multi line!) (#mandatory)
+ description='''
+A Dummy Mod used within the purpuritis mod code
+It's a mod to test multiple mods running at once too
+and a dummy mod used to make sure Purpuritis gets loaded
+'''
+[[mods]]
+# # The modid of the mod
+# modId="z_purpuritis_dummy" #mandatory
+# # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+# version="1.0" #mandatory
+# # A display name for the mod
+# displayName="ZDummy Mod" #mandatory
+# authors="Codetoil" #optional
+# # The description text for the mod (multi line!) (#mandatory)
+# description='''
+# A 2nd Dummy Mod used within the purpuritis mod code
+# Z is the last letter of the alphabet, in addition it's a mod to test prefixes
+# and a mod to test Multiple Mods Running at once
+# and a dummy mod used to make sure Purpuritis gets loaded
+# '''
