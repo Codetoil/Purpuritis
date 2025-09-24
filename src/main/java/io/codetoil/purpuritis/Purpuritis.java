@@ -2,17 +2,12 @@ package io.codetoil.purpuritis;
 
 import com.google.common.collect.*;
 import io.codetoil.purpuritis.data.DataProviderPurpuritis;
-import io.codetoil.purpuritis.world.level.block.IPurpuredBlock;
-import io.codetoil.purpuritis.world.level.block.PurpuredBlock;
-import io.codetoil.purpuritis.world.level.block.PurpuredBlockItem;
 import io.codetoil.purpuritis.world.level.levelgen.CopyChunkGenerator;
-import io.codetoil.purpuritis.world.item.*;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ToolMaterial;
@@ -47,8 +42,8 @@ public class Purpuritis {
 
     public static final String MOD_ID = "purpuritis";
 
-    public static final BiMap<Block, IPurpuredBlock> purpuredBlocks = HashBiMap.create();
-    public static final BiMap<Item, IPurpuredItem> purpuredItems = HashBiMap.create();
+    public static final BiMap<Block, Block> purpuredBlocks = HashBiMap.create();
+    public static final BiMap<Item, Item> purpuredItems = HashBiMap.create();
     public static final Collection<ToolMaterial> toolMaterials = Sets.newHashSet();
     public static final Collection<ArmorMaterial> armorMaterials = Sets.newHashSet();
     public static final BiMap<ToolMaterial, ToolMaterial> purpuredToolMaterials = HashBiMap.create();
@@ -160,18 +155,17 @@ public class Purpuritis {
         registerEvent.register(ForgeRegistries.Keys.BLOCKS, helper -> {
             LOGGER.info("Registering Blocks");
             ForgeRegistries.BLOCKS.forEach((block) -> {
-                if (!(block instanceof IPurpuredBlock)) {
-                    PurpuredBlock purpuredBlock = new PurpuredBlock(block, BlockBehaviour.Properties.of()
-                            .mapColor(DyeColor.PINK));
+                if (!PurpuredObjectHelper.isPurpuredBlock((Class<Block>) block.getClass())) {
+                    Block purpuredBlock = PurpuredObjectHelper.createPurpuredBlock(block,
+                                    BlockBehaviour.Properties.of().mapColor(DyeColor.PINK));
                     purpuredBlocks.put(block, purpuredBlock);
                     helper.register(
                             ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
-                                    "purpured_" + Objects.requireNonNull(ForgeRegistries.BLOCKS
-                                            .getKey(purpuredBlock.getNormalBlock())).getNamespace()
-                                            + "_" + Objects.requireNonNull(ForgeRegistries.BLOCKS
-                                            .getKey(purpuredBlock.getNormalBlock())).getPath()
+                                    "purpured_" +
+                                            Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getNamespace()
+                                            + "_" + Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getPath()
                             ),
-                            purpuredBlock.getSelf());
+                            purpuredBlock);
                 }
             });
         });
@@ -203,23 +197,16 @@ public class Purpuritis {
             LOGGER.info("Registering Items");
             ForgeRegistries.ITEMS.forEach((item) -> {
                 LOGGER.info("purpurifying item: {}", item);
-                if (!(item instanceof IPurpuredItem)) {
-                    IPurpuredItem purpuredItem;
-                    if (item instanceof BlockItem) {
-                        purpuredItem = new PurpuredBlockItem(item,
-                                Objects.requireNonNull(purpuredBlocks.get(((BlockItem) item).getBlock())),
-                                new Item.Properties());
-                    } else {
-                        purpuredItem = new PurpuredItem(item, new Item.Properties());
-                    }
+                if (!PurpuredObjectHelper.isPurpuredItem(item.getClass())) {
+                    Item purpuredItem = PurpuredObjectHelper.createPurpuredItem(item,
+                            new Item.Properties());
                     purpuredItems.put(item, purpuredItem);
                     helper.register(
                             ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
-                                    "purpured" + Objects.requireNonNull(ForgeRegistries.ITEMS
-                                            .getKey(purpuredItem.getNormalItem())).getNamespace()
-                                            + "_" + Objects.requireNonNull(ForgeRegistries.ITEMS
-                                            .getKey(purpuredItem.getNormalItem())).getPath()
-                            ), purpuredItem.getSelf());
+                                    "purpured" +
+                                            Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)).getNamespace()
+                                            + "_" + Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)).getPath()
+                            ), purpuredItem);
                 }
             });
         });
