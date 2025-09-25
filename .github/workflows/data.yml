@@ -1,4 +1,4 @@
-mame: data
+name: data
 on: [pull_request, push]
 
 jobs:
