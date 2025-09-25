@@ -125,7 +125,7 @@ public class PurpuredObjectHelper {
             if (constructor.getParameterTypes()[index] == Block.class) {
                 if (originalItem instanceof BlockItem)
                 {
-                    result[index] = ((BlockItem) originalItem).getBlock();
+                    result[index] = Purpuritis.purpuredBlocks.get(((BlockItem) originalItem).getBlock());
                 } else if (originalItem instanceof AirItem)
                 {
                     result[index] = Blocks.AIR;
