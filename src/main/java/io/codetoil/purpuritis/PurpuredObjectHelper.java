@@ -48,7 +48,8 @@ public class PurpuredObjectHelper {
         classWriter.visit(
                 Opcodes.V21,
                 Opcodes.ACC_PUBLIC,
-                "purpuritis_dynamic/item/Purpured" + originalItemClass.getName().replace('.', '_'),
+                "purpuritis_dynamic/item/Purpured" + originalItemClass.getName()
+                        .replace('.', '_').replace('$', '_'),
                 null,
                 originalItemClass.getName().replace('.', '/'),
                 new String[] {});
@@ -160,7 +161,7 @@ public class PurpuredObjectHelper {
         }
 
         String purpuredItemClassName = "purpuritis_dynamic.item.Purpured"
-                + originalItemClass.getName().replace('.', '_');
+                + originalItemClass.getName().replace('.', '_').replace('$', '_');
 
         Class<I> purpuredItemClass;
         try {
