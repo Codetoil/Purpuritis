@@ -3,29 +3,35 @@ package io.codetoil.purpuritis;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import net.minecraft.world.item.AirItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PurpuredObjectHelper {
 
     private static final PurpuritisDynamicClassLoader purpuritisDynamicClassLoader
             = new PurpuritisDynamicClassLoader();
 
+
     // Items
 
-    private static final BiMap<Class<? extends Item>, Class<? extends Item>> purpuredItemClassMap
-            = HashBiMap.create();
+
+    private static final BiMap<Class<? extends Item>, Class<? extends Item>> purpuredItemClassMap = HashBiMap.create();
     private static final Map<Class<? extends Item>, byte[]> purpuredItemClassByteArrayMap = Maps.newHashMap();
+    private static final Map<Class<? extends Item>, Constructor<? extends Item>> purpuredItemClassSelectedConstructor
+            = Maps.newHashMap();
 
     public static <I extends Item> byte[] getPurpuredItemClassByteArray(Class<I> originalItemClass) {
         if (purpuredItemClassByteArrayMap.containsKey(originalItemClass)) {
@@ -47,30 +53,49 @@ public class PurpuredObjectHelper {
                 originalItemClass.getName().replace('.', '/'),
                 new String[] {});
 
-        MethodVisitor constructor = classWriter.visitMethod(
+        MethodVisitor constructorVisitor = classWriter.visitMethod(
                 Opcodes.ACC_PUBLIC,
                 "<init>",
-                "(" + originalItemClass.descriptorString()
-                        + Item.Properties.class.descriptorString() + ")V",
+                "(" + originalItemClass.descriptorString() + ")V",
                 null,
                 null);
 
-        constructor.visitCode();
-        constructor.visitVarInsn(Opcodes.ALOAD, 0);
-        constructor.visitLdcInsn(Type.getType(originalItemClass));
-        constructor.visitMethodInsn(Opcodes.INVOKESTATIC,
+        Label startConstructorParameters = new Label();
+        Label endConstructorParameters = new Label();
+        constructorVisitor.visitLocalVariable("constructorParameters", Object[].class.descriptorString(),
+                null, startConstructorParameters, endConstructorParameters, 2);
+
+        constructorVisitor.visitCode();
+        constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0);
+        constructorVisitor.visitLdcInsn(Type.getType(originalItemClass));
+        constructorVisitor.visitVarInsn(Opcodes.ALOAD, 1);
+        constructorVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
                 "io/codetoil/purpuritis/PurpuredObjectHelper",
-                "createItemProperties",
-                "(" + Class.class.descriptorString() + ")" + Item.Properties.class.descriptorString(),
+                "createItemConstructorParameters",
+                "(" + Class.class.descriptorString() + Item.class.descriptorString() + ")["
+                        + Object.class.descriptorString(),
                 false);
-        constructor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+        constructorVisitor.visitLabel(startConstructorParameters);
+        constructorVisitor.visitVarInsn(Opcodes.ASTORE, 2);
+        for (int index = 0; index < getSelectedConstructor(originalItemClass).getParameterCount(); index++) {
+            constructorVisitor.visitVarInsn(Opcodes.ALOAD, 2);
+            constructorVisitor.visitIntInsn(Opcodes.SIPUSH, index); // Limited to Short.MAX_VALUE parameters.
+            constructorVisitor.visitInsn(Opcodes.AALOAD);
+            constructorVisitor.visitTypeInsn(Opcodes.CHECKCAST, getSelectedConstructor(originalItemClass)
+                    .getParameterTypes()[index].getName().replace('.', '/'));
+        }
+        constructorVisitor.visitLabel(endConstructorParameters);
+
+        constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
                 originalItemClass.getName().replace('.', '/'),
                 "<init>",
-                "(" + Item.Properties.class.descriptorString() + ")V",
+                "(" +
+                        Arrays.stream(getSelectedConstructor(originalItemClass).getParameterTypes())
+                                .map(Class::descriptorString).collect(Collectors.joining()) + ")V",
                 false);
 
-        constructor.visitInsn(Opcodes.RETURN);
-        constructor.visitMaxs(1, 1);
+        constructorVisitor.visitInsn(Opcodes.RETURN);
+        constructorVisitor.visitMaxs(1, 1);
 
         classWriter.visitEnd();
         byte[] result = classWriter.toByteArray();
@@ -92,20 +117,90 @@ public class PurpuredObjectHelper {
     }
 
     @SuppressWarnings("unused") // Used by Generated Classes
-    public static <I extends Item> Item.Properties createItemProperties(Class<I> originalItemClass) {
-        return new Item.Properties();
+    public static Object[] createItemConstructorParameters(Class<? extends Item> originalItemClass,
+                                                                            Item originalItem) {
+        Constructor<? extends Item> constructor = getSelectedConstructor(originalItemClass);
+        Object[] result = new Object[constructor.getParameterCount()];
+        for (int index = 0; index < result.length; index++) {
+            if (constructor.getParameterTypes()[index] == Block.class) {
+                if (originalItem instanceof BlockItem)
+                {
+                    result[index] = ((BlockItem) originalItem).getBlock();
+                } else if (originalItem instanceof AirItem)
+                {
+                    result[index] = Blocks.AIR;
+                } else {
+                    result[index] = null;
+                }
+            } else if (constructor.getParameterTypes()[index] == Item.Properties.class) {
+                result[index] = new Item.Properties(); // TODO implement custom Item properties
+            } else if (constructor.getParameterTypes()[index] == byte.class) {
+                result[index] = new PurpuredObjectHelper.PurpuritisByteWrapper((byte) 0);
+            } else if (constructor.getParameterTypes()[index] == short.class) {
+                result[index] = new PurpuredObjectHelper.PurpuritisShortWrapper((short) 0);
+            } else if (constructor.getParameterTypes()[index] == int.class) {
+                result[index] = new PurpuredObjectHelper.PurpuritisIntWrapper(0);
+            } else if (constructor.getParameterTypes()[index] == long.class) {
+                result[index] = new PurpuredObjectHelper.PurpuritisLongWrapper(0L);
+            } else if (constructor.getParameterTypes()[index] == char.class) {
+                result[index] = new PurpuredObjectHelper.PurpuritisCharWrapper((char) 0);
+            } else if (constructor.getParameterTypes()[index] == float.class) {
+                result[index] = new PurpuredObjectHelper.PurpuritisFloatWrapper(0.0f);
+            } else if (constructor.getParameterTypes()[index] == double.class) {
+                result[index] = new PurpuredObjectHelper.PurpuritisDoubleWrapper(0.0);
+            } else if (constructor.getParameterTypes()[index] == boolean.class) {
+                result[index] = new PurpuredObjectHelper.PurpuritisBooleanWrapper(false);
+            } else {
+                result[index] = null;
+            }
+        }
+        return result;
+    }
+
+    public static <I extends Item> Constructor<I> getSelectedConstructor(Class<I> originalItemClass) {
+        if (purpuredItemClassSelectedConstructor.containsKey(originalItemClass)) {
+            return (Constructor<I>) purpuredItemClassSelectedConstructor.get(originalItemClass);
+        }
+
+        return selectConstructor(originalItemClass);
+    }
+
+    private static <I extends Item> Constructor<I> selectConstructor(Class<I> originalItemClass) {
+        Constructor<I>[] constructors = (Constructor<I>[]) originalItemClass.getConstructors();
+        if (constructors.length == 0)
+            throw new IllegalArgumentException("Class does not contain any constructors (should not be possible, " +
+                    "is someone messing with bytecode?)");
+        int sizeOfMinimumSizedConstructor = Integer.MAX_VALUE;
+        int indexOfMinimumSizedConstructor = 0;
+        for (int index = 0; index < constructors.length; index++) {
+            Constructor<I> constructor = constructors[index];
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            if (parameterTypes.length == 1 && parameterTypes[0] == Item.Properties.class) {
+                return constructor;
+            }
+            if (parameterTypes.length == 2 && parameterTypes[0] == Block.class
+                    && parameterTypes[1] == Item.Properties.class) {
+                return constructor;
+            }
+            if (constructor.getParameterCount() < sizeOfMinimumSizedConstructor) {
+                indexOfMinimumSizedConstructor = index;
+                sizeOfMinimumSizedConstructor = constructor.getParameterCount();
+            }
+        }
+
+        Constructor<I> constructor = constructors[indexOfMinimumSizedConstructor];
+        purpuredItemClassSelectedConstructor.put(originalItemClass, constructor);
+        return constructor;
     }
 
     public static <I extends Item> boolean isPurpuredItem(Class<I> itemClass) {
         return purpuredItemClassMap.containsValue(itemClass);
     }
 
-    public static <I extends Item> I createPurpuredItem(I originalItem,
-                                                        Item.Properties properties) {
+    public static <I extends Item> I createPurpuredItem(I originalItem) {
         Class<I> originalItemClass = (Class<I>) originalItem.getClass();
         try {
-            return getPurpuredItemClass(originalItemClass).getConstructor(originalItemClass, Item.Properties.class)
-                    .newInstance(originalItem, properties);
+            return getPurpuredItemClass(originalItemClass).getConstructor(originalItemClass).newInstance(originalItem);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -113,8 +208,6 @@ public class PurpuredObjectHelper {
 
 
     // Blocks
-
-
 
 
     private static final BiMap<Class<? extends Block>, Class<? extends Block>> purpuredBlockClassMap
@@ -160,14 +253,105 @@ public class PurpuredObjectHelper {
         }
     }
 
-    @SuppressWarnings("unused") // Used by Generated Classes
-    public static <B extends Block> BlockBehaviour.Properties createBlockBehaviorProperties(Class<B> originalBlockCLass) {
-        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK);
-    }
-
     private static final class PurpuritisDynamicClassLoader extends ClassLoader {
         public Class<?> defineClass(String name, byte[] b) {
             return defineClass(name, b, 0, b.length);
+        }
+    }
+
+    @ApiStatus.Internal
+    private static final class PurpuritisByteWrapper {
+        private final byte value;
+        public PurpuritisByteWrapper(byte value) {
+            this.value = value;
+        }
+
+        public byte getValue() {
+            return value;
+        }
+    }
+
+    @ApiStatus.Internal
+    private static final class PurpuritisShortWrapper {
+        private final short value;
+        public PurpuritisShortWrapper(short value) {
+            this.value = value;
+        }
+
+        public short getValue() {
+            return value;
+        }
+    }
+
+    @ApiStatus.Internal
+    private static final class PurpuritisIntWrapper {
+        private final int value;
+        public PurpuritisIntWrapper(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    @ApiStatus.Internal
+    private static final class PurpuritisLongWrapper {
+        private final long value;
+        public PurpuritisLongWrapper(long value) {
+            this.value = value;
+        }
+
+        public long getValue() {
+            return value;
+        }
+    }
+
+    @ApiStatus.Internal
+    private static final class PurpuritisCharWrapper {
+        private final char value;
+        public PurpuritisCharWrapper(char value) {
+            this.value = value;
+        }
+
+        public char getValue() {
+            return value;
+        }
+    }
+
+    @ApiStatus.Internal
+    private static final class PurpuritisFloatWrapper {
+        private final float value;
+        public PurpuritisFloatWrapper(float value) {
+            this.value = value;
+        }
+
+        public float getValue() {
+            return value;
+        }
+    }
+
+    @ApiStatus.Internal
+    private static final class PurpuritisDoubleWrapper {
+        private final double value;
+        public PurpuritisDoubleWrapper(double value) {
+            this.value = value;
+        }
+
+        public double getValue() {
+            return value;
+        }
+    }
+
+    @ApiStatus.Internal
+    private static final class PurpuritisBooleanWrapper {
+        private final boolean value;
+        public PurpuritisBooleanWrapper(boolean value) {
+            this.value = value;
+        }
+
+        public boolean getValue() {
+            return value;
         }
     }
 }

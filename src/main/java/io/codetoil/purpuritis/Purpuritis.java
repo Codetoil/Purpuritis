@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -199,8 +200,7 @@ public class Purpuritis {
             ForgeRegistries.ITEMS.forEach((item) -> {
                 LOGGER.info("purpurifying item: {}", item);
                 if (!PurpuredObjectHelper.isPurpuredItem(item.getClass())) {
-                    Item purpuredItem = PurpuredObjectHelper.createPurpuredItem(item,
-                            new Item.Properties());
+                    Item purpuredItem = PurpuredObjectHelper.createPurpuredItem(item);
                     purpuredItems.put(item, purpuredItem);
                     helper.register(
                             ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
