@@ -2,6 +2,7 @@ package io.codetoil.purpuritis;
 
 import com.google.common.collect.*;
 import io.codetoil.purpuritis.data.DataProviderPurpuritis;
+import io.codetoil.purpuritis.data.DataProviderPurpuritisPurpuredItems;
 import io.codetoil.purpuritis.world.level.levelgen.CopyChunkGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceKey;
@@ -111,8 +112,8 @@ public class Purpuritis {
 
     public void gatherData(final GatherDataEvent event) {
         LOGGER.info("We are running a data version of minecraft forge, gathering data and printing");
-        DataProvider dataProvider = new DataProviderPurpuritis(event.getGenerator());
-        event.getGenerator().addProvider(true, dataProvider);
+        event.getGenerator().addProvider(true, new DataProviderPurpuritis(event.getGenerator()));
+        event.getGenerator().addProvider(true, new DataProviderPurpuritisPurpuredItems(event.getGenerator()));
     }
 
     public void onServerStarting(ServerStartingEvent event) {
@@ -152,7 +153,7 @@ public class Purpuritis {
     }
 
     public void registerEvent(final RegisterEvent registerEvent) {
-        registerEvent.register(ForgeRegistries.Keys.BLOCKS, helper -> {
+        /*registerEvent.register(ForgeRegistries.Keys.BLOCKS, helper -> {
             LOGGER.info("Registering Blocks");
             ForgeRegistries.BLOCKS.forEach((block) -> {
                 if (!PurpuredObjectHelper.isPurpuredBlock((Class<Block>) block.getClass())) {
@@ -168,7 +169,7 @@ public class Purpuritis {
                             purpuredBlock);
                 }
             });
-        });
+        });*/
         registerEvent.register(ForgeRegistries.Keys.ITEMS, helper -> {
             if (purpuredToolMaterials.isEmpty()) {
                 for (ToolMaterial toolMaterial : toolMaterials) {

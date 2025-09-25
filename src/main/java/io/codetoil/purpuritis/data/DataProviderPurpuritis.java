@@ -6,7 +6,6 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 public class DataProviderPurpuritis implements DataProvider
@@ -19,9 +18,8 @@ public class DataProviderPurpuritis implements DataProvider
 	}
 
 	@Override
-	public @NotNull CompletableFuture<?> run(CachedOutput cachedOutput)
+	public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cachedOutput)
 	{
-		Path path = gen.getPackOutput().getOutputFolder();
         String data = "LOGGER=" +
                 Purpuritis.LOGGER +
                 "\npurpuredItems=" +
