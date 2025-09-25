@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class PurpuredObjectHelper {
 
     private static final PurpuritisDynamicClassLoader purpuritisDynamicClassLoader
-            = new PurpuritisDynamicClassLoader();
+            = new PurpuritisDynamicClassLoader(PurpuredObjectHelper.class.getClassLoader());
 
 
     // Items
@@ -254,6 +254,10 @@ public class PurpuredObjectHelper {
     }
 
     private static final class PurpuritisDynamicClassLoader extends ClassLoader {
+        public PurpuritisDynamicClassLoader(ClassLoader parent) {
+            super(parent);
+        }
+
         public Class<?> defineClass(String name, byte[] b) {
             return defineClass(name, b, 0, b.length);
         }
