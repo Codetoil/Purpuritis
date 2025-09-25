@@ -9,7 +9,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +51,7 @@ public class PurpuredObjectHelper {
                         .replace('.', '_').replace('$', '_'),
                 null,
                 originalItemClass.getName().replace('.', '/'),
-                new String[] {});
+                new String[]{});
 
         MethodVisitor constructorVisitor = classWriter.visitMethod(
                 Opcodes.ACC_PUBLIC,
@@ -88,43 +87,43 @@ public class PurpuredObjectHelper {
                 case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisByteWrapper":
                     constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
                             "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisByteWrapper",
-                            "getValue",
+                            "value",
                             "()B",
                             false);
                 case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisShortWrapper":
                     constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
                             "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisShortWrapper",
-                            "getValue",
+                            "value",
                             "()S",
                             false);
                 case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisIntWrapper":
                     constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
                             "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisIntWrapper",
-                            "getValue",
+                            "value",
                             "()I",
                             false);
                 case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisLongWrapper":
                     constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
                             "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisLongWrapper",
-                            "getValue",
+                            "value",
                             "()J",
                             false);
                 case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisCharWrapper":
                     constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
                             "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisCharWrapper",
-                            "getValue",
+                            "value",
                             "()C",
                             false);
                 case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisFloatWrapper":
                     constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
                             "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisFloatWrapper",
-                            "getValue",
+                            "value",
                             "()F",
                             false);
                 case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisDoubleWrapper":
                     constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
                             "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisDoubleWrapper",
-                            "getValue",
+                            "value",
                             "()D",
                             false);
                 case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisBooleanWrapper":
@@ -178,16 +177,14 @@ public class PurpuredObjectHelper {
 
     @SuppressWarnings("unused") // Used by Generated Classes
     public static Object[] createItemConstructorParameters(Class<? extends Item> originalItemClass,
-                                                                            Item originalItem) {
+                                                           Item originalItem) {
         Constructor<? extends Item> constructor = getSelectedConstructor(originalItemClass);
         Object[] result = new Object[constructor.getParameterCount()];
         for (int index = 0; index < result.length; index++) {
             if (constructor.getParameterTypes()[index] == Block.class) {
-                if (originalItem instanceof BlockItem)
-                {
+                if (originalItem instanceof BlockItem) {
                     result[index] = Purpuritis.purpuredBlocks.get(((BlockItem) originalItem).getBlock());
-                } else if (originalItem instanceof AirItem)
-                {
+                } else if (originalItem instanceof AirItem) {
                     result[index] = Blocks.AIR;
                 } else {
                     result[index] = null;
@@ -263,14 +260,16 @@ public class PurpuredObjectHelper {
         Class<I> originalItemClass = (Class<I>) originalItem.getClass();
         try {
             return getPurpuredItemClass(originalItemClass).getConstructor(originalItemClass).newInstance(originalItem);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
 
     private static final class PurpuritisDynamicClassLoader extends ClassLoader {
         public PurpuritisDynamicClassLoader(ClassLoader parent) {
-            super(parent);
+            super( "PurpuritisDynamicClassLoader of " + parent.getName() + "@" +
+                    Integer.toHexString(parent.hashCode()), parent);
         }
 
         public Class<?> defineClass(String name, byte[] b) {
@@ -279,98 +278,34 @@ public class PurpuredObjectHelper {
     }
 
     @ApiStatus.Internal
-    private static final class PurpuritisByteWrapper {
-        private final byte value;
-        public PurpuritisByteWrapper(byte value) {
-            this.value = value;
-        }
-
-        public byte getValue() {
-            return value;
-        }
+    private record PurpuritisByteWrapper(byte value) {
     }
 
     @ApiStatus.Internal
-    private static final class PurpuritisShortWrapper {
-        private final short value;
-        public PurpuritisShortWrapper(short value) {
-            this.value = value;
-        }
-
-        public short getValue() {
-            return value;
-        }
+    private record PurpuritisShortWrapper(short value) {
     }
 
     @ApiStatus.Internal
-    private static final class PurpuritisIntWrapper {
-        private final int value;
-        public PurpuritisIntWrapper(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
+    private record PurpuritisIntWrapper(int value) {
     }
 
     @ApiStatus.Internal
-    private static final class PurpuritisLongWrapper {
-        private final long value;
-        public PurpuritisLongWrapper(long value) {
-            this.value = value;
-        }
-
-        public long getValue() {
-            return value;
-        }
+    private record PurpuritisLongWrapper(long value) {
     }
 
     @ApiStatus.Internal
-    private static final class PurpuritisCharWrapper {
-        private final char value;
-        public PurpuritisCharWrapper(char value) {
-            this.value = value;
-        }
-
-        public char getValue() {
-            return value;
-        }
+    private record PurpuritisCharWrapper(char value) {
     }
 
     @ApiStatus.Internal
-    private static final class PurpuritisFloatWrapper {
-        private final float value;
-        public PurpuritisFloatWrapper(float value) {
-            this.value = value;
-        }
-
-        public float getValue() {
-            return value;
-        }
+    private record PurpuritisFloatWrapper(float value) {
     }
 
     @ApiStatus.Internal
-    private static final class PurpuritisDoubleWrapper {
-        private final double value;
-        public PurpuritisDoubleWrapper(double value) {
-            this.value = value;
-        }
-
-        public double getValue() {
-            return value;
-        }
+    private record PurpuritisDoubleWrapper(double value) {
     }
 
     @ApiStatus.Internal
-    private static final class PurpuritisBooleanWrapper {
-        private final boolean value;
-        public PurpuritisBooleanWrapper(boolean value) {
-            this.value = value;
-        }
-
-        public boolean getValue() {
-            return value;
-        }
+    private record PurpuritisBooleanWrapper(boolean value) {
     }
 }
