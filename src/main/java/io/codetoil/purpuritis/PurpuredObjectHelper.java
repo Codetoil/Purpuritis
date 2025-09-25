@@ -48,9 +48,7 @@ public class PurpuredObjectHelper {
         classWriter.visit(
                 Opcodes.V21,
                 Opcodes.ACC_PUBLIC,
-                "purpuritis_dynamic/item/"
-                        + originalItemClass.getPackageName().replace('.', '/') + "/Purpured"
-                        + originalItemClass.getSimpleName(),
+                "purpuritis_dynamic/item/Purpured" + originalItemClass.getName().replace('.', '_'),
                 null,
                 originalItemClass.getName().replace('.', '/'),
                 new String[] {});
@@ -161,8 +159,8 @@ public class PurpuredObjectHelper {
             return (Class<I>) purpuredItemClassMap.get(originalItemClass);
         }
 
-        String purpuredItemClassName = "purpuritis_dynamic.item."
-                + originalItemClass.getPackageName() + ".Purpured" + originalItemClass.getSimpleName();
+        String purpuredItemClassName = "purpuritis_dynamic.item.Purpured"
+                + originalItemClass.getName().replace('.', '_');
 
         Class<I> purpuredItemClass;
         try {
@@ -229,7 +227,7 @@ public class PurpuredObjectHelper {
     }
 
     private static <I extends Item> Constructor<I> selectConstructor(Class<I> originalItemClass) {
-        Constructor<I>[] constructors = (Constructor<I>[]) originalItemClass.getConstructors();
+        Constructor<I>[] constructors = (Constructor<I>[]) originalItemClass.getDeclaredConstructors();
         if (constructors.length == 0)
             throw new IllegalArgumentException("Class " + originalItemClass + " does not contain any constructors " +
                     "(should not be possible, is someone messing with bytecode?)");
