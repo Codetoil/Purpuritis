@@ -1,13 +1,8 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
-
-name: gameTest
+mame: data
 on: [pull_request, push]
 
 jobs:
-  gameTest:
+  data:
     runs-on: ubuntu-24.04
     steps:
       - name: checkout repository
