@@ -3,12 +3,14 @@ package io.codetoil.purpuritis;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.AirItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.*;
@@ -83,6 +85,56 @@ public class PurpuredObjectHelper {
             constructorVisitor.visitInsn(Opcodes.AALOAD);
             constructorVisitor.visitTypeInsn(Opcodes.CHECKCAST, getSelectedConstructor(originalItemClass)
                     .getParameterTypes()[index].getName().replace('.', '/'));
+            switch (getSelectedConstructor(originalItemClass).getParameterTypes()[index].getName()) {
+                case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisByteWrapper":
+                    constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                            "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisByteWrapper",
+                            "getValue",
+                            "()B",
+                            false);
+                case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisShortWrapper":
+                    constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                            "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisShortWrapper",
+                            "getValue",
+                            "()S",
+                            false);
+                case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisIntWrapper":
+                    constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                            "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisIntWrapper",
+                            "getValue",
+                            "()I",
+                            false);
+                case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisLongWrapper":
+                    constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                            "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisLongWrapper",
+                            "getValue",
+                            "()J",
+                            false);
+                case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisCharWrapper":
+                    constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                            "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisCharWrapper",
+                            "getValue",
+                            "()C",
+                            false);
+                case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisFloatWrapper":
+                    constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                            "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisFloatWrapper",
+                            "getValue",
+                            "()F",
+                            false);
+                case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisDoubleWrapper":
+                    constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                            "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisDoubleWrapper",
+                            "getValue",
+                            "()D",
+                            false);
+                case "io.codetoil.purpuritis.PurpuredObjectHelper$PurpuritisBooleanWrapper":
+                    constructorVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                            "io/codetoil/purpuritis/PurpuredObjectHelper$PurpuritisBooleanWrapper",
+                            "getValue",
+                            "()Z",
+                            false);
+            }
         }
         constructorVisitor.visitLabel(endConstructorParameters);
 
@@ -109,11 +161,13 @@ public class PurpuredObjectHelper {
             return (Class<I>) purpuredItemClassMap.get(originalItemClass);
         }
 
-        var byteArray = getPurpuredItemClassByteArray(originalItemClass);
+        Class<I> purpuredItemClass = (Class<I>) purpuritisDynamicClassLoader.defineClass("purpuritis_dynamic.item."
+                        + originalItemClass.getPackageName() + ".Purpured" + originalItemClass.getSimpleName(),
+                getPurpuredItemClassByteArray(originalItemClass));
 
-        return (Class<I>) purpuritisDynamicClassLoader.defineClass("purpuritis_dynamic.item."
-                + originalItemClass.getPackageName() + ".Purpured" + originalItemClass.getSimpleName(),
-                byteArray);
+        purpuredItemClassMap.put(originalItemClass, purpuredItemClass);
+
+        return purpuredItemClass;
     }
 
     @SuppressWarnings("unused") // Used by Generated Classes
@@ -133,23 +187,25 @@ public class PurpuredObjectHelper {
                     result[index] = null;
                 }
             } else if (constructor.getParameterTypes()[index] == Item.Properties.class) {
-                result[index] = new Item.Properties(); // TODO implement custom Item properties
+                ResourceKey<Item> key = ResourceKey.create(ForgeRegistries.ITEMS.getRegistryKey(),
+                        ForgeRegistries.ITEMS.getKey(originalItem));
+                result[index] = new Item.Properties().setId(key); // TODO implement custom Item properties
             } else if (constructor.getParameterTypes()[index] == byte.class) {
-                result[index] = new PurpuredObjectHelper.PurpuritisByteWrapper((byte) 0);
+                result[index] = new PurpuritisByteWrapper((byte) 0);
             } else if (constructor.getParameterTypes()[index] == short.class) {
-                result[index] = new PurpuredObjectHelper.PurpuritisShortWrapper((short) 0);
+                result[index] = new PurpuritisShortWrapper((short) 0);
             } else if (constructor.getParameterTypes()[index] == int.class) {
-                result[index] = new PurpuredObjectHelper.PurpuritisIntWrapper(0);
+                result[index] = new PurpuritisIntWrapper(0);
             } else if (constructor.getParameterTypes()[index] == long.class) {
-                result[index] = new PurpuredObjectHelper.PurpuritisLongWrapper(0L);
+                result[index] = new PurpuritisLongWrapper(0L);
             } else if (constructor.getParameterTypes()[index] == char.class) {
-                result[index] = new PurpuredObjectHelper.PurpuritisCharWrapper((char) 0);
+                result[index] = new PurpuritisCharWrapper((char) 0);
             } else if (constructor.getParameterTypes()[index] == float.class) {
-                result[index] = new PurpuredObjectHelper.PurpuritisFloatWrapper(0.0f);
+                result[index] = new PurpuritisFloatWrapper(0.0f);
             } else if (constructor.getParameterTypes()[index] == double.class) {
-                result[index] = new PurpuredObjectHelper.PurpuritisDoubleWrapper(0.0);
+                result[index] = new PurpuritisDoubleWrapper(0.0);
             } else if (constructor.getParameterTypes()[index] == boolean.class) {
-                result[index] = new PurpuredObjectHelper.PurpuritisBooleanWrapper(false);
+                result[index] = new PurpuritisBooleanWrapper(false);
             } else {
                 result[index] = null;
             }
@@ -168,8 +224,8 @@ public class PurpuredObjectHelper {
     private static <I extends Item> Constructor<I> selectConstructor(Class<I> originalItemClass) {
         Constructor<I>[] constructors = (Constructor<I>[]) originalItemClass.getConstructors();
         if (constructors.length == 0)
-            throw new IllegalArgumentException("Class does not contain any constructors (should not be possible, " +
-                    "is someone messing with bytecode?)");
+            throw new IllegalArgumentException("Class " + originalItemClass + " does not contain any constructors " +
+                    "(should not be possible, is someone messing with bytecode?)");
         int sizeOfMinimumSizedConstructor = Integer.MAX_VALUE;
         int indexOfMinimumSizedConstructor = 0;
         for (int index = 0; index < constructors.length; index++) {
