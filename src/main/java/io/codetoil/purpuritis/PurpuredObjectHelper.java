@@ -161,9 +161,16 @@ public class PurpuredObjectHelper {
             return (Class<I>) purpuredItemClassMap.get(originalItemClass);
         }
 
-        Class<I> purpuredItemClass = (Class<I>) purpuritisDynamicClassLoader.defineClass("purpuritis_dynamic.item."
-                        + originalItemClass.getPackageName() + ".Purpured" + originalItemClass.getSimpleName(),
-                getPurpuredItemClassByteArray(originalItemClass));
+        String purpuredItemClassName = "purpuritis_dynamic.item."
+                + originalItemClass.getPackageName() + ".Purpured" + originalItemClass.getSimpleName();
+
+        Class<I> purpuredItemClass;
+        try {
+            purpuredItemClass = (Class<I>) purpuritisDynamicClassLoader.loadClass(purpuredItemClassName);
+        } catch (ClassNotFoundException e) {
+            purpuredItemClass = (Class<I>) purpuritisDynamicClassLoader.defineClass(purpuredItemClassName,
+                    getPurpuredItemClassByteArray(originalItemClass));
+        }
 
         purpuredItemClassMap.put(originalItemClass, purpuredItemClass);
 
@@ -257,53 +264,6 @@ public class PurpuredObjectHelper {
         Class<I> originalItemClass = (Class<I>) originalItem.getClass();
         try {
             return getPurpuredItemClass(originalItemClass).getConstructor(originalItemClass).newInstance(originalItem);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    // Blocks
-
-
-    private static final BiMap<Class<? extends Block>, Class<? extends Block>> purpuredBlockClassMap
-            = HashBiMap.create();
-
-    public static @NotNull <B extends Block> Class<B> getPurpuredBlockClass(Class<B> originalBlockClass)
-            throws IllegalAccessException {
-        if (purpuredBlockClassMap.containsKey(originalBlockClass)) {
-            return (Class<B>) purpuredBlockClassMap.get(originalBlockClass);
-        }
-
-        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-
-        classWriter.visit(
-                Opcodes.V21,
-                Opcodes.ACC_PUBLIC,
-                "purpuritis_dynamic/block/"
-                        + originalBlockClass.getPackageName().replace('.', '/') + "/Purpured"
-                        + originalBlockClass.getSimpleName(),
-                null,
-                originalBlockClass.getName().replace('.', '/'),
-                new String[] {});
-
-        classWriter.visitEnd();
-
-        return (Class<B>) purpuritisDynamicClassLoader.defineClass("purpuritis_dynamic.block."
-                        + originalBlockClass.getPackageName() + ".Purpured" + originalBlockClass.getSimpleName(),
-                classWriter.toByteArray());
-    }
-
-    public static <B extends Block> boolean isPurpuredBlock(Class<B> blockClass) {
-        return purpuredBlockClassMap.containsValue(blockClass);
-    }
-
-    public static <B extends Block> B createPurpuredBlock(B originalBlock, BlockBehaviour.Properties properties) {
-        Class<B> originalBlockClass = (Class<B>) originalBlock.getClass();
-        try {
-            return getPurpuredBlockClass(originalBlockClass)
-                    .getConstructor(originalBlockClass, BlockBehaviour.Properties.class)
-                    .newInstance(originalBlock, properties);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
