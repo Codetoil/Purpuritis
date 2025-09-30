@@ -1,6 +1,6 @@
 package io.codetoil.purpuritis.world.item;
 
-import io.codetoil.dynamic_registries.DynamicRegistriesObjectHelper;
+import io.codetoil.dynamic_registries.api.DynamicRegistriesObjectHelper;
 import io.codetoil.purpuritis.Purpuritis;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

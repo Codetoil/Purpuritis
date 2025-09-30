@@ -1,9 +1,8 @@
 package io.codetoil.purpuritis;
 
 import com.google.common.collect.*;
-import io.codetoil.dynamic_registries.DynamicRegistriesObjectHelper;
 import io.codetoil.purpuritis.data.DataProviderPurpuritis;
-import io.codetoil.dynamic_registries.data.DataProviderDynamicRegistries;
+import io.codetoil.dynamic_registries.api.data.DataProviderDynamicRegistries;
 import io.codetoil.purpuritis.world.item.PurpuredItemHelper;
 import io.codetoil.purpuritis.world.level.levelgen.CopyChunkGenerator;
 import net.minecraft.data.DataProvider;
