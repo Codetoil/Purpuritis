@@ -1,22 +1,22 @@
 package io.codetoil.purpuritis;
 
 import com.google.common.collect.*;
+import io.codetoil.dynamic_registries.DynamicRegistriesObjectHelper;
 import io.codetoil.purpuritis.data.DataProviderPurpuritis;
-import io.codetoil.purpuritis.data.DataProviderPurpuritisPurpuredItems;
+import io.codetoil.dynamic_registries.data.DataProviderDynamicRegistries;
+import io.codetoil.purpuritis.world.item.PurpuredItemHelper;
 import io.codetoil.purpuritis.world.level.levelgen.CopyChunkGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterials;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.TickEvent;
@@ -32,7 +32,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -113,8 +112,13 @@ public class Purpuritis {
 
     public void gatherData(final GatherDataEvent event) {
         LOGGER.info("We are running a data version of minecraft forge, gathering data and printing");
-        event.getGenerator().addProvider(true, new DataProviderPurpuritis(event.getGenerator()));
-        event.getGenerator().addProvider(true, new DataProviderPurpuritisPurpuredItems(event.getGenerator()));
+        event.getGenerator().addProvider(true, (DataProvider.Factory<? extends DataProvider>)
+                output -> new DataProviderPurpuritis(output, event.getLookupProvider()));
+        event.getGenerator().addProvider(true,
+                (DataProvider.Factory<? extends DataProvider>)
+                        output -> new DataProviderDynamicRegistries<>(output,
+                                event.getLookupProvider(), purpuredItems,
+                        PurpuredItemHelper.ITEM_DYNAMIC_REGISTRIES_OBJECT_HELPER));
     }
 
     public void onServerStarting(ServerStartingEvent event) {
@@ -133,7 +137,7 @@ public class Purpuritis {
         while (levelIterator.hasNext()) {
             try (ServerLevel level = levelIterator.next()) {
                 if (level.getChunkSource().getGenerator() instanceof CopyChunkGenerator) {
-                    // TODO Set Chunk provider, somehow... maybe set the world to something else? Like ServerWorldCopy?
+                    // TODO Set Chunk registries, somehow... maybe set the world to something else? Like ServerWorldCopy?
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -199,8 +203,8 @@ public class Purpuritis {
             LOGGER.info("Registering Items");
             ForgeRegistries.ITEMS.forEach((item) -> {
                 LOGGER.info("purpurifying item: {}", item);
-                if (!PurpuredObjectHelper.isPurpuredItem(item.getClass())) {
-                    Item purpuredItem = PurpuredObjectHelper.createPurpuredItem(item);
+                if (!PurpuredItemHelper.ITEM_DYNAMIC_REGISTRIES_OBJECT_HELPER.isObject(item.getClass())) {
+                    Item purpuredItem = PurpuredItemHelper.createPurpuredItem(item);
                     purpuredItems.put(item, purpuredItem);
                     helper.register(
                             ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
