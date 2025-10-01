@@ -131,7 +131,7 @@ public class Purpuritis {
     }
 
     public void onServerPretick(TickEvent.ServerTickEvent.Pre event) {
-        MinecraftServer server = event.getServer();
+        MinecraftServer server = event.server();
         Iterator<ServerLevel> levelIterator = server.getAllLevels().iterator();
         while (levelIterator.hasNext()) {
             try (ServerLevel level = levelIterator.next()) {
