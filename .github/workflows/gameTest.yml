@@ -16,7 +16,6 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew jar
       - name: runGameTestServer
         run: ./gradlew runGameTestServer
         env:
