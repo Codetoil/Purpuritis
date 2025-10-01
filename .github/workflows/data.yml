@@ -16,6 +16,10 @@ jobs:
           distribution: 'temurin'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
+      - run: ./gradlew
+        env:
+          USERNAME: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: runGameTestServer
         run: ./gradlew runData
       - name: capture data generation

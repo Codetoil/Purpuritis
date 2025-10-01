@@ -128,10 +128,10 @@ repositories {
     }
     maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/Codetoil/dynamic-registries")
+        url = uri("https://maven.pkg.github.com/codetoil/dynamic-registries")
         credentials {
             username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            password = project.findProperty("gpr.key") ?: System.getenv("DR_KEY")
         }
     }
     mavenLocal()
@@ -219,7 +219,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Codetoil/Purpuritis")
+            url = uri("https://maven.pkg.github.com/codetoil/Purpuritis")
             credentials {
                 username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
                 password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
