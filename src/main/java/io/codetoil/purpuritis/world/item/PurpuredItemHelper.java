@@ -44,7 +44,7 @@ public class PurpuredItemHelper {
     public static <I extends Item> I createPurpuredItem(I originalItem) {
         Class<I> originalItemClass = (Class<I>) originalItem.getClass();
         try {
-            return ITEM_DYNAMIC_REGISTRIES_OBJECT_HELPER.getClass(originalItemClass, Item.class)
+            return ITEM_DYNAMIC_REGISTRIES_OBJECT_HELPER.getClass(originalItemClass)
                     .getConstructor(originalItemClass).newInstance(originalItem);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
