@@ -171,8 +171,8 @@ dependencies {
     // runtimeOnly "mezz.jei:jei-${mc_version}-forge:${jei_version}"
 
     implementation("org.ow2.asm:asm")
-    implementation(fg.deobf("io.codetoil:dynamic-registries:0.0.2"))
-    runtimeOnly(fg.deobf("io.codetoil:dynamic-registries-transformer:0.0.2"))
+    implementation(fg.deobf("io.codetoil:dynamic-registries:${dynamic_registries_version}"))
+    runtimeOnly(fg.deobf("io.codetoil:dynamic-registries-transformer:${dynamic_registries_transformer_version}"))
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
@@ -195,7 +195,9 @@ tasks.named('processResources', ProcessResources) {
             loader_version_range: loader_version_range,
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
-            dynamic_registries_version_range: dynamic_registries_version_range
+            dynamic_registries_version_range: dynamic_registries_version_range,
+            dynamic_registries_version: dynamic_registries_version,
+            dynamic_registries_transformer_version: dynamic_registries_transformer_version,
     ]
     inputs.properties replaceProperties
 

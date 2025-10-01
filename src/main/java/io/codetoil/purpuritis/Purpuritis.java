@@ -115,9 +115,9 @@ public class Purpuritis {
                 output -> new DataProviderPurpuritis(output, event.getLookupProvider()));
         event.getGenerator().addProvider(true,
                 (DataProvider.Factory<? extends DataProvider>)
-                        output -> new DataProviderDynamicRegistries<>(output,
-                                event.getLookupProvider(), purpuredItems,
-                        PurpuredItemHelper.ITEM_DYNAMIC_REGISTRIES_OBJECT_HELPER));
+                        output -> new DataProviderDynamicRegistries<Item>(output,
+                                event.getLookupProvider(), purpuredItems, Item.class,
+                                PurpuredItemHelper.ITEM_DYNAMIC_REGISTRIES_OBJECT_HELPER));
     }
 
     public void onServerStarting(ServerStartingEvent event) {
