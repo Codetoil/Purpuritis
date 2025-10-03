@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:item/purpured_minecraft_generated",
-    "textures": {
-        "layer0": "purpuritis:item/purpured_minecraft_nether_brick"
-    }
-}

@@ -1,8 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_slab",
-    "textures": {
-        "bottom": "purpuritis:block/purpured_minecraft_mossy_stone_bricks",
-        "top": "purpuritis:block/purpured_minecraft_mossy_stone_bricks",
-        "side": "purpuritis:block/purpured_minecraft_mossy_stone_bricks"
-    }
-}

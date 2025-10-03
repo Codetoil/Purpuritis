@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_wall_inventory",
-    "textures": {
-        "wall": "purpuritis:block/purpured_minecraft_end_stone_bricks"
-    }
-}

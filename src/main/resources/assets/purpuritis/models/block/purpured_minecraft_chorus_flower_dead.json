@@ -1,8 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_chorus_flower",
-    "textures": {
-        "texture": "block/purpured_minecraft_chorus_flower_dead",
-        "bottom": "purpuritis:block/purpured_minecraft_chorus_plant",
-        "particle": "purpuritis:block/purpured_minecraft_chorus_flower_dead"
-    }
-}

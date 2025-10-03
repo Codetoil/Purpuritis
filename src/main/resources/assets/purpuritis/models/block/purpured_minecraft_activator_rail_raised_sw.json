@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_template_rail_raised_sw",
-    "textures": {
-        "rail": "purpuritis:block/purpured_minecraft_activator_rail"
-    }
-}

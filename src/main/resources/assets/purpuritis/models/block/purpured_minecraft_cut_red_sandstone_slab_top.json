@@ -1,8 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_slab_top",
-    "textures": {
-        "bottom": "purpuritis:block/purpured_minecraft_red_sandstone_top",
-        "top": "purpuritis:block/purpured_minecraft_red_sandstone_top",
-        "side": "purpuritis:block/purpured_minecraft_cut_red_sandstone"
-    }
-}

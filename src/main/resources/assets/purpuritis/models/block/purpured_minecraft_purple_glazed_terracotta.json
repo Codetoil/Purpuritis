@@ -1,7 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_template_glazed_terracotta",
-    "textures": {
-        "particle": "purpuritis:block/purpured_minecraft_purple_glazed_terracotta",
-        "pattern": "purpuritis:block/purpured_minecraft_purple_glazed_terracotta"
-    }
-}

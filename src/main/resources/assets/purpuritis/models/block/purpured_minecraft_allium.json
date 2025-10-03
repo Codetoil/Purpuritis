@@ -1,7 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_cross",
-    "textures": {
-        "particle": "purpuritis:block/purpured_minecraft_allium",
-        "cross": "purpuritis:block/purpured_minecraft_allium"
-    }
-}

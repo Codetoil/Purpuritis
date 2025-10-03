@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_leaves",
-    "textures": {
-        "all": "purpuritis:block/purpured_minecraft_acacia_leaves"
-    }
-}

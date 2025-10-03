@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_crop",
-    "textures": {
-        "crop": "purpuritis:block/purpured_minecraft_potatoes_stage3"
-    }
-}

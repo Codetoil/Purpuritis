@@ -1,7 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_cube_column",
-    "textures": {
-        "side": "purpuritis:block/purpured_minecraft_chiseled_quartz_block",
-        "end": "purpuritis:block/purpured_minecraft_chiseled_quartz_block_top"
-    }
-}

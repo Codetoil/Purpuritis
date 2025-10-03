@@ -1,9 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_orientable_with_bottom",
-    "textures": {
-        "bottom": "purpuritis:block/purpured_minecraft_smoker_bottom",
-        "top": "purpuritis:block/purpured_minecraft_smoker_top",
-        "front": "purpuritis:block/purpured_minecraft_smoker_front",
-        "side": "purpuritis:block/purpured_minecraft_smoker_side"
-    }
-}

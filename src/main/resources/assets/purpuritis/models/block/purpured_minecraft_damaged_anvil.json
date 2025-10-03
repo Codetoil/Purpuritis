@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_anvil",
-    "textures": {
-        "top": "purpuritis:block/purpured_minecraft_damaged_anvil_top"
-    }
-}

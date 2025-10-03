@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:item/purpured_minecraft_chest",
-    "textures": {
-        "particle": "purpuritis:block/purpured_minecraft_obsidian"
-    }
-}

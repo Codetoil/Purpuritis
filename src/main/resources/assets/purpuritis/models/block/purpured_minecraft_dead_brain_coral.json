@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_cross",
-    "textures": {
-        "cross": "purpuritis:block/purpured_minecraft_dead_brain_coral"
-    }
-}

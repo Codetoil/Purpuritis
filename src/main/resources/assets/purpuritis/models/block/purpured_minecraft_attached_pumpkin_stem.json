@@ -1,7 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_stem_fruit",
-    "textures": {
-        "stem": "purpuritis:block/purpured_minecraft_pumpkin_stem",
-        "upperstem": "purpuritis:block/purpured_minecraft_attached_pumpkin_stem"
-    }
-}

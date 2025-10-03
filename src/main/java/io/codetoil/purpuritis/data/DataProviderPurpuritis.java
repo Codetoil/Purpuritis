@@ -22,10 +22,6 @@ public record DataProviderPurpuritis(PackOutput output,
         return this.registries.thenCompose(provider -> {
             String data = "LOGGER=" +
                     Purpuritis.LOGGER +
-                    "\npurpuredItems=" +
-                    Purpuritis.purpuredItems +
-                    "\npurpuredBlocks=" +
-                    Purpuritis.purpuredBlocks +
                     "\npurpuredDimensionTypes=" +
                     Purpuritis.purpuredDimensionTypes;
             Purpuritis.LOGGER.info("Finished gathering data");

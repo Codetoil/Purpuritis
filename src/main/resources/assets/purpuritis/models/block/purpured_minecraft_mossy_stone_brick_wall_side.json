@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_template_wall_side",
-    "textures": {
-        "wall": "purpuritis:block/purpured_minecraft_mossy_stone_bricks"
-    }
-}

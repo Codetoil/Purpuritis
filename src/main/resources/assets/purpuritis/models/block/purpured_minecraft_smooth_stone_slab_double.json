@@ -1,7 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_cube_column",
-    "textures": {
-        "end": "purpuritis:block/purpured_minecraft_smooth_stone",
-        "side": "purpuritis:block/purpured_minecraft_smooth_stone_slab_side"
-    }
-}

@@ -1,8 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_orientable",
-    "textures": {
-        "top": "purpuritis:block/purpured_minecraft_pumpkin_top",
-        "front": "purpuritis:block/purpured_minecraft_carved_pumpkin",
-        "side": "purpuritis:block/purpured_minecraft_pumpkin_side"
-    }
-}

@@ -1,8 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_cube_bottom_top",
-    "textures": {
-        "top": "purpuritis:block/purpured_minecraft_barrel_top_open",
-        "side": "purpuritis:block/purpured_minecraft_barrel_side",
-        "bottom": "purpuritis:block/purpured_minecraft_barrel_bottom"
-    }
-}

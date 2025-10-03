@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_cube_all",
-    "textures": {
-        "all": "purpuritis:block/purpured_minecraft_red_wool"
-    }
-}

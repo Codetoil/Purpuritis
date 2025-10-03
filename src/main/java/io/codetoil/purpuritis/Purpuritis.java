@@ -1,58 +1,43 @@
 package io.codetoil.purpuritis;
 
 import com.google.common.collect.*;
+import com.mojang.logging.LogUtils;
 import io.codetoil.purpuritis.data.DataProviderPurpuritis;
-import io.codetoil.dynamic_registries.api.data.DataProviderDynamicRegistries;
-import io.codetoil.purpuritis.world.item.PurpuredItemHelper;
-import io.codetoil.purpuritis.world.level.levelgen.CopyChunkGenerator;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorMaterials;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.util.Unit;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
+import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Purpuritis.MOD_ID)
 public class Purpuritis {
-    // Directly reference a log4j logger.
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final String MOD_ID = "purpuritis";
 
-    public static final BiMap<Block, Block> purpuredBlocks = HashBiMap.create();
-    public static final BiMap<Item, Item> purpuredItems = HashBiMap.create();
-    public static final Collection<ToolMaterial> toolMaterials = Sets.newHashSet();
-    public static final Collection<ArmorMaterial> armorMaterials = Sets.newHashSet();
-    public static final BiMap<ToolMaterial, ToolMaterial> purpuredToolMaterials = HashBiMap.create();
-    public static final BiMap<ArmorMaterial, ArmorMaterial> purpuredArmorMaterials = HashBiMap.create();
     public static final BiMap<ResourceKey<DimensionType>, ResourceKey<DimensionType>> purpuredDimensionTypes
             = HashBiMap.create();
-    // public boolean hasSetFirstToLoad = false;
-    private final Queue<ChunkPos> chunkPositionQueue = Queues.newArrayDeque();
-    private boolean loadedAllChunks = false;
+
+    private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPE_DEFERRED_REGISTER =
+            DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MOD_ID);
+
+    public static final RegistryObject<DataComponentType<Unit>> PURPURED = DATA_COMPONENT_TYPE_DEFERRED_REGISTER
+            .register("purpured", () -> DataComponentType.<Unit>builder()
+                    .persistent(Unit.CODEC)
+                    .networkSynchronized(Unit.STREAM_CODEC)
+                    .build());
 
     public Purpuritis(FMLJavaModLoadingContext context) {
         LOGGER.info("Constructing Purpuritis");
@@ -63,29 +48,11 @@ public class Purpuritis {
         InterModProcessEvent.getBus(modBusGroup).addListener(this::processIMC);
         FMLClientSetupEvent.getBus(modBusGroup).addListener(this::clientSetup);
         GatherDataEvent.getBus(modBusGroup).addListener(this::gatherData);
-        ServerStartingEvent.BUS.addListener(this::onServerStarting);
-        ServerStoppedEvent.BUS.addListener(this::onServerStopped);
-        TickEvent.ServerTickEvent.Pre.BUS.addListener(this::onServerPretick);
-        ChunkEvent.Load.BUS.addListener(this::onChunkLoad);
-        RegisterEvent.getBus(modBusGroup).addListener(this::registerEvent);
-    }
-
-    public static void addToolMaterials(Collection<ToolMaterial> toolMaterials) {
-        Purpuritis.toolMaterials.addAll(toolMaterials);
-    }
-
-    public static void addArmorMaterials(Collection<ArmorMaterial> armorMaterials) {
-        Purpuritis.armorMaterials.addAll(armorMaterials);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // some preinit code
         LOGGER.info("HELLO FROM SETUP");
-        addToolMaterials(Sets.newHashSet(ToolMaterial.WOOD, ToolMaterial.STONE,
-                ToolMaterial.GOLD, ToolMaterial.IRON, ToolMaterial.DIAMOND, ToolMaterial.NETHERITE));
-        addArmorMaterials(Sets.newHashSet(ArmorMaterials.LEATHER,
-                ArmorMaterials.ARMADILLO_SCUTE, ArmorMaterials.TURTLE_SCUTE, ArmorMaterials.CHAINMAIL,
-                ArmorMaterials.IRON, ArmorMaterials.DIAMOND, ArmorMaterials.NETHERITE));
         //LOGGER.info("STONE BLOCK >> {}", Blocks.STONE.getRegistryName());
     }
 
@@ -113,106 +80,5 @@ public class Purpuritis {
         LOGGER.info("We are running a data version of minecraft forge, gathering data and printing");
         event.getGenerator().addProvider(true, (DataProvider.Factory<? extends DataProvider>)
                 output -> new DataProviderPurpuritis(output, event.getLookupProvider()));
-        event.getGenerator().addProvider(true,
-                (DataProvider.Factory<? extends DataProvider>)
-                        output -> new DataProviderDynamicRegistries<Item>(output,
-                                event.getLookupProvider(), purpuredItems, Item.class,
-                                PurpuredItemHelper.ITEM_DYNAMIC_REGISTRIES_OBJECT_HELPER));
-    }
-
-    public void onServerStarting(ServerStartingEvent event) {
-        // do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
-
-    public void onServerStopped(ServerStoppedEvent event) {
-        loadedAllChunks = false;
-        LOGGER.info("Server has stopped");
-    }
-
-    public void onServerPretick(TickEvent.ServerTickEvent.Pre event) {
-        MinecraftServer server = event.server();
-        Iterator<ServerLevel> levelIterator = server.getAllLevels().iterator();
-        while (levelIterator.hasNext()) {
-            try (ServerLevel level = levelIterator.next()) {
-                if (level.getChunkSource().getGenerator() instanceof CopyChunkGenerator) {
-                    // TODO Set Chunk registries, somehow... maybe set the world to something else? Like ServerWorldCopy?
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if (chunkPositionQueue.isEmpty()) return;
-        LOGGER.info("Going through queue of size {}", chunkPositionQueue.size());
-        long startTime = System.currentTimeMillis();
-
-        LOGGER.info("Finished going through queue");
-        loadedAllChunks = true;
-        Purpuritis.LOGGER.info("loadingChunks took {}ms", System.currentTimeMillis() - startTime);
-    }
-
-    public void onChunkLoad(ChunkEvent.Load event) {
-        if (this.loadedAllChunks) return;
-        chunkPositionQueue.add(event.getChunk().getPos());
-    }
-
-    public void registerEvent(final RegisterEvent registerEvent) {
-        /*registerEvent.register(ForgeRegistries.Keys.BLOCKS, helper -> {
-            LOGGER.info("Registering Blocks");
-            ForgeRegistries.BLOCKS.forEach((block) -> {
-                if (!PurpuredObjectHelper.isPurpuredBlock((Class<Block>) block.getClass())) {
-                    Block purpuredBlock = PurpuredObjectHelper.createPurpuredBlock(block,
-                                    BlockBehaviour.Properties.of().mapColor(DyeColor.PINK));
-                    purpuredBlocks.put(block, purpuredBlock);
-                    helper.register(
-                            ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
-                                    "purpured_" +
-                                            Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getNamespace()
-                                            + "_" + Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getPath()
-                            ),
-                            purpuredBlock);
-                }
-            });
-        });*/
-        registerEvent.register(ForgeRegistries.Keys.ITEMS, helper -> {
-            if (purpuredToolMaterials.isEmpty()) {
-                for (ToolMaterial toolMaterial : toolMaterials) {
-                    purpuredToolMaterials.put(toolMaterial, new ToolMaterial(toolMaterial.incorrectBlocksForDrops(),
-                            toolMaterial.durability() * 2, toolMaterial.speed() * 2,
-                            toolMaterial.attackDamageBonus() + 4,
-                            toolMaterial.enchantmentValue() / 5, toolMaterial.repairItems()));
-                }
-            }
-            LOGGER.info(purpuredToolMaterials);
-            if (purpuredArmorMaterials.isEmpty()) {
-                for (ArmorMaterial armorMaterial : armorMaterials) {
-                    purpuredArmorMaterials.put(armorMaterial, new ArmorMaterial(armorMaterial.durability() * 2,
-                            Maps.transformValues(armorMaterial.defense(),
-                                    (value) -> {
-                                        assert value != null;
-                                        return value + 4;
-                                    }),
-                            armorMaterial.enchantmentValue() / 5, armorMaterial.equipSound(),
-                            armorMaterial.toughness() + 2,
-                            armorMaterial.knockbackResistance() + 2,
-                            armorMaterial.repairIngredient(), armorMaterial.assetId()));
-                }
-            }
-            LOGGER.info(purpuredArmorMaterials);
-            LOGGER.info("Registering Items");
-            ForgeRegistries.ITEMS.forEach((item) -> {
-                LOGGER.info("purpurifying item: {}", item);
-                if (!PurpuredItemHelper.ITEM_DYNAMIC_REGISTRIES_OBJECT_HELPER.isObject(item.getClass())) {
-                    Item purpuredItem = PurpuredItemHelper.createPurpuredItem(item);
-                    purpuredItems.put(item, purpuredItem);
-                    helper.register(
-                            ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
-                                    "purpured" +
-                                            Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)).getNamespace()
-                                            + "_" + Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)).getPath()
-                            ), purpuredItem);
-                }
-            });
-        });
     }
 }

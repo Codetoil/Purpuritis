@@ -1,7 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_carpet",
-    "textures": {
-        "particle": "purpuritis:block/purpured_minecraft_magenta_wool",
-        "wool": "purpuritis:block/purpured_minecraft_magenta_wool"
-    }
-}

@@ -1,6 +1,0 @@
-{
-    "parent": "purpuritis:item/purpured_minecraft_handheld_rod",
-    "textures": {
-        "layer0": "purpuritis:item/purpured_minecraft_carrot_on_a_stick"
-    }
-}

@@ -1,8 +1,0 @@
-{
-    "parent": "purpuritis:block/purpured_minecraft_template_farmland",
-    "textures": {
-        "particle": "purpuritis:block/purpured_minecraft_dirt",
-        "dirt": "purpuritis:block/purpured_minecraft_dirt",
-        "top": "purpuritis:block/purpured_minecraft_farmland"
-    }
-}
