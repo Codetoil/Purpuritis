@@ -48,6 +48,7 @@ public class Purpuritis {
         InterModProcessEvent.getBus(modBusGroup).addListener(this::processIMC);
         FMLClientSetupEvent.getBus(modBusGroup).addListener(this::clientSetup);
         GatherDataEvent.getBus(modBusGroup).addListener(this::gatherData);
+        DATA_COMPONENT_TYPE_DEFERRED_REGISTER.register(modBusGroup);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
