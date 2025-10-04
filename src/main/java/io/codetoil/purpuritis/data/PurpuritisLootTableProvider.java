@@ -1,0 +1,19 @@
+package io.codetoil.purpuritis.data;
+
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.storage.loot.LootTable;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+
+public class PurpuritisLootTableProvider extends LootTableProvider {
+    public PurpuritisLootTableProvider(PackOutput packOutput, Set<ResourceKey<LootTable>> requiredTables,
+                                       List<SubProviderEntry> subProviders,
+                                       CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, requiredTables, subProviders, registries);
+    }
+}
