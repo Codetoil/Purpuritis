@@ -1,7 +1,8 @@
 {
   "package": "io.codetoil.purpuritis.mixin",
   "mixins": [
-    "ItemMixin"
+    "ItemMixin",
+    "ItemStackMixin"
   ],
   "minVersion": "0.8.7",
   "required": true,
