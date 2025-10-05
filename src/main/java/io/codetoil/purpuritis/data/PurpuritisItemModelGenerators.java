@@ -18,7 +18,6 @@ public class PurpuritisItemModelGenerators extends ItemModelGenerators {
 
     @Override
     public void run() {
-        // Use internel item to generate purpured_tint models.
         ModelTemplates.FLAT_ITEM.create(ResourceLocation.fromNamespaceAndPath(Purpuritis.MOD_ID,
                 "purpured_tint"), TextureMapping.layer0(ResourceLocation.
                 fromNamespaceAndPath(Purpuritis.MOD_ID, "purpured_tint")), modelOutput);
