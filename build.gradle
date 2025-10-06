@@ -12,8 +12,42 @@ base {
     archivesName = mod_id
 }
 
+sourceSets {
+    transformer {
+        java {
+            srcDir "src/transformer/java"
+        }
+        resources {
+            srcDir "src/transformer/resources"
+        }
+    }
+
+    both {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+        compileClasspath += sourceSets.transformer.output
+        runtimeClasspath += sourceSets.transformer.output
+    }
+}
+
+configurations {
+    transformerImplementation.extendsFrom(implementation)
+    transformerRuntimeOnly.extendsFrom(runtimeOnly)
+    transformerAnnotationProcessor.extendsFrom(annotationProcessor)
+    transformerMinecraft.extendsFrom(minecraft)
+
+    bothImplementation.extendsFrom(implementation, transformerImplementation)
+    bothRuntimeOnly.extendsFrom(runtimeOnly, transformerRuntimeOnly)
+    bothAnnotationProcessor.extendsFrom(annotationProcessor, transformerAnnotationProcessor)
+    bothMinecraft.extendsFrom(minecraft, transformerMinecraft)
+}
+
 // Mojang ships Java 21 to end users in 1.20.5+, so your mod should target Java 21.
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withJavadocJar()
+    withSourcesJar()
+}
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
@@ -71,8 +105,21 @@ minecraft {
             // Recommended for development - enables more descriptive errors at the cost of slower startup and registration.
             property 'eventbus.api.strictRuntimeChecks', 'true'
 
-            args "-mixin.config=purpuritis.mixins.json", "-mixin.config=purpuritis.client.mixins.json",
-                    "-mixin.config=purpuritis.server.mixins.json"
+            ideaModule "${mod_name}.both"
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+
+                    args "-mixin.config=${mod_id}.mixins.json", "-mixin.config=${mod_id}.client.mixins.json",
+                            "-mixin.config=${mod_id}.server.mixins.json"
+                }
+                "${mod_id}_transformer" {
+                    source sourceSets.transformer
+
+                    merge mods."${mod_id}", true
+                }
+            }
         }
 
         client {
@@ -142,17 +189,31 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    transformerMinecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    bothMinecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // Forge 1.21.6+ uses EventBus 7, which shifts most of its runtime validation to compile-time via an annotation processor
     // to improve performance in production environments. This line is required to enable said compile-time validation
     // in your development environment, helping you catch issues early.
     annotationProcessor "net.minecraftforge:eventbus-validator:${event_bus_validator_version}"
+    transformerAnnotationProcessor "net.minecraftforge:eventbus-validator:${event_bus_validator_version}"
+    bothAnnotationProcessor "net.minecraftforge:eventbus-validator:${event_bus_validator_version}"
 
     // Apply Mixin AP
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    transformerAnnotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    bothAnnotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
+        jarJar.ranged(it, "${mixin_extras_version_range}")
+    }
+    transformerCompileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
+    transformerImplementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
+        jarJar.ranged(it, "${mixin_extras_version_range}")
+    }
+    bothCompileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
+    bothImplementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
         jarJar.ranged(it, "${mixin_extras_version_range}")
     }
 
@@ -163,6 +224,8 @@ dependencies {
     // runtimeOnly "mezz.jei:jei-${mc_version}-forge:${jei_version}"
 
     implementation("org.ow2.asm:asm")
+    transformerImplementation("org.ow2.asm:asm")
+    bothImplementation("org.ow2.asm:asm")
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
@@ -205,8 +268,25 @@ tasks.named('processResources', ProcessResources) {
     }
 }
 
-// Example for how to get properties into the manifest for reading at runtime.
-tasks.named('jar', Jar) {
+tasks.named('processTestResources', ProcessResources).configure {
+    var replaceProperties = [minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
+                             forge_version       : forge_version, forge_version_range: forge_version_range,
+                             loader_version_range: loader_version_range,
+                             mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+                             mod_authors         : mod_authors, mod_description: mod_description,]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('processTransformerResources', ProcessResources).configure {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
+jar {
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
@@ -216,9 +296,27 @@ tasks.named('jar', Jar) {
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : mod_authors
         ])
-//        attributes['MixinConfigs'] = "${mod_id}.mixins.json"
+        attributes['MixinConfigs'] = ["${mod_id}.client.mixins.json",
+                                      "${mod_id}.mixins.json",
+                                      "${mod_id}.server.mixins.json"]
     }
+
+    from sourceSets.main.output
+
+    archiveBaseName = "${mod_id}"
 }
+
+// need to configure this one from scratch
+tasks.register('transformerJar', Jar) {
+    // referring to the output in this way
+    // allows Gradle to infer task dependencies automatically
+    from sourceSets.transformer.output
+
+    archiveBaseName = "${mod_id}-transformer"
+}
+
+// one way to make `gradle build` run both Jar tasks
+jar.dependsOn(transformerJar)
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
