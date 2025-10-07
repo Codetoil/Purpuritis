@@ -3,14 +3,17 @@ package io.codetoil.purpuritis.transformer;
 import cpw.mods.modlauncher.api.ITransformer;
 import cpw.mods.modlauncher.api.ITransformerVotingContext;
 import cpw.mods.modlauncher.api.TransformerVoteResult;
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.jetbrains.annotations.NotNull;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
+import java.nio.file.Path;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class DataComponentGetterImplementationTransformers implements ITransformer<ClassNode> {
+public class DataComponentGetterImplementationTransformers implements ITransformer<MethodNode> {
     @Override
-    public @NotNull ClassNode transform(ClassNode input, ITransformerVotingContext context) {
+    public @NotNull MethodNode transform(MethodNode input, ITransformerVotingContext context) {
         return input;
     }
 
@@ -21,6 +24,13 @@ public class DataComponentGetterImplementationTransformers implements ITransform
 
     @Override
     public @NotNull Set<Target> targets() {
-        return Set.of();
+        var result = DataComponentGetterImplementationLocator.getDataComponentGetterSetPerMod().values()
+                .stream().flatMap(Set::stream).map(Path::toString)
+                .map(path -> Target.targetMethod(path, FMLLoader.isProduction() ? "m_318834_" : "get",
+                        "(L" +
+                                (FMLLoader.isProduction() ? "ko" : "net/minecraft/core/component/DataComponentType")
+                                + ";)Ljava/lang/Object;"))
+                .collect(Collectors.toSet());
+        return result;
     }
 }

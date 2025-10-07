@@ -7,6 +7,8 @@ import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
+import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 
 import java.io.IOException;
@@ -19,9 +21,11 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class DataComponentGetterImplementationLocator implements IDependencyLocator {
+    private static Map<IModFile, @NotNull Set<Path>> dataComponentGetterSetPerMod;
+
     @Override
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {
-        var result = Streams.stream(loadedMods).filter(Objects::nonNull).map(modFile ->
+        dataComponentGetterSetPerMod = Streams.stream(loadedMods).filter(Objects::nonNull).map(modFile ->
                         Pair.of(modFile, modFile.getSecureJar().getPackages().stream().map((packageDir) -> {
                             try (var filesInModStream = Files.find(modFile.getSecureJar()
                                             .getPath(packageDir.replace(".", "/")), 1,
@@ -40,25 +44,33 @@ public class DataComponentGetterImplementationLocator implements IDependencyLoca
                             ByteBuffer buffer;
                             try (SeekableByteChannel channel =
                                          path.getFileSystem().provider().newByteChannel(path, Set.of())) {
-                                if (!channel.isOpen())
-                                {
+                                if (!channel.isOpen()) {
                                     throw new IllegalStateException("ByteChannel for " +
                                             pair.getLeft() + " is closed");
                                 }
                                 buffer = ByteBuffer.allocate((int) channel.size());
                                 channel.read(buffer);
-                            } catch (IOException e)
-                            {
+                            } catch (IOException e) {
                                 LogManager.getLogger().error(e);
                                 return false;
                             }
                             buffer.flip();
-                            return false;
+                            ClassReader classReader = new ClassReader(buffer.array());
+                            return Arrays.stream(classReader.getInterfaces())
+                                    .anyMatch(value ->
+                                            "net/minecraft/core/component/DataComponentGetter".equals(value) ||
+                                            "kk".equals(value));
                         }).collect(Collectors.toSet())))
                 .filter(pair -> !pair.getRight().isEmpty())
-                .map(Pair::getLeft)
-                .toList();
-        return result;
+                .reduce(Maps.newHashMap(), (map, pair) -> {
+                            map.put(pair.getLeft(), pair.getRight());
+                            return map;
+                        },
+                        (map1, map2) -> {
+                            map1.putAll(map2);
+                            return map1;
+                        });
+        return dataComponentGetterSetPerMod.keySet().stream().toList();
     }
 
     @Override
@@ -79,5 +91,9 @@ public class DataComponentGetterImplementationLocator implements IDependencyLoca
     @Override
     public boolean isValid(IModFile modFile) {
         return false;
+    }
+
+    public static Map<IModFile, @NotNull Set<Path>> getDataComponentGetterSetPerMod() {
+        return dataComponentGetterSetPerMod;
     }
 }
