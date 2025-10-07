@@ -1,7 +1,6 @@
 package io.codetoil.purpuritis;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Streams;
 import com.mojang.logging.LogUtils;
 import io.codetoil.purpuritis.core.component.PurpuritisDataComponentTypes;
 import io.codetoil.purpuritis.data.PurpuritisModelProvider;
